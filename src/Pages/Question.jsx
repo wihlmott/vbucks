@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { retreiveQuiz } from "../bd";
 import ProgressBar from "../Components/ProgressBar";
 import QuestionFooter from "../Components/QuestionFooter/QuestionFooter";
 import CompleteModal from "../Components/CompleteModal";
@@ -8,6 +7,8 @@ import QuestionHeader from "../Components/QuestionHeader";
 import Loading from "../Components/Loading";
 import Options from "../Components/Options";
 import { usePersistedState } from "../hooks/usePersistedState";
+import { db } from "../database/databases";
+import { Query } from "appwrite";
 
 const Question = () => {
     const { state } = useLocation();
@@ -31,11 +32,13 @@ const Question = () => {
 
     const [quiz, setQuiz] = useState({ quiz: [], max: 0, isLoading: true });
     const init = async () => {
-        const response = await retreiveQuiz(topic);
+        const response = await db.questions.list([
+            Query.equal("quiz_title", [`${topic}`]),
+        ]);
         setQuiz(() => {
             return {
-                quiz: response,
-                max: response.length - 1,
+                quiz: response.documents,
+                max: response.total - 1,
                 isLoading: false,
             };
         });
@@ -72,9 +75,14 @@ const Question = () => {
     const nextQuestion = () => {
         setCounter((prev) => {
             reset();
-            return prev.value == quiz.max
-                ? { value: quiz.max, full: true }
-                : { value: prev.value + 1, full: false };
+
+            if (prev.value == quiz.max) {
+                //write to document
+                return { value: quiz.max, full: true };
+            }
+
+            if (prev.value != quiz.max)
+                return { value: prev.value + 1, full: false };
         });
         setQuizScore((prev) => (clicked.status ? prev + 10 : prev + 5));
     };

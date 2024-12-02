@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { retreiveSubjects } from "../bd";
 import LinkCard from "../Components/LinkCard";
 import WelcomeHeader from "../Components/WelcomeHeader";
 import { subjects } from "../config";
 import Loading from "../Components/Loading";
+import { db } from "../database/databases";
 
 const Subjects = () => {
     const [state, setState] = useState({ subjects: [], isLoading: true });
 
     const init = async () => {
-        const response = await retreiveSubjects();
+        const response = await db.subjects.list();
         setState(() => {
-            return { subjects: response, isLoading: false };
+            return { subjects: response.documents, isLoading: false };
         });
     };
     useEffect(() => {

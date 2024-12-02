@@ -1,16 +1,16 @@
 import { useLocation } from "react-router-dom";
 import Header from "../Components/Header";
 import LinkCard from "../Components/LinkCard";
-import { retreiveTopics } from "../bd";
 import { useEffect, useState } from "react";
 import Loading from "../Components/Loading";
+import { db } from "../database/databases";
 
 const SubjectIntro = () => {
     const { state: subject } = useLocation();
     const [state, setState] = useState({ topics: [], isLoading: true });
 
     const init = async () => {
-        const response = await retreiveTopics(subject.title);
+        const response = await db.subjects.get(subject.title);
         setState({ topics: response.quiz_titles, isLoading: false });
     };
 

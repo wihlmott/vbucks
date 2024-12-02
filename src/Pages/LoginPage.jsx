@@ -3,9 +3,10 @@ import Button from "../Components/Button";
 import Input from "../Components/Input";
 import Loading from "../Components/Loading";
 import { colors } from "../config";
-import { retreiveUserToSignIn } from "../bd";
 import { UserContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
+import { db } from "../database/databases";
+import { Query } from "appwrite";
 
 const LoginPage = () => {
     const [_, setUser] = useContext(UserContext);
@@ -31,16 +32,30 @@ const LoginPage = () => {
 
         setIsloading(true);
         try {
-            const user = await retreiveUserToSignIn(formState);
-
-            setUser(() => [
-                user[0].name,
-                user[0].surname,
-                user[0].class,
-                user[0].subject_points,
+            const user = await db.users.list([
+                Query.and([
+                    Query.equal("name", [
+                        `${formState.username.split(" ")[0]}`,
+                    ]),
+                    Query.equal("surname", [
+                        `${formState.username.split(" ")[1]}`,
+                    ]),
+                ]),
             ]);
-            setIsloading(false);
-            navigate("/");
+
+            if (user.total == 0) throw `user not found`;
+            if (user.documents[0].password != formState.password)
+                throw `username and password don't match`;
+            if (user.documents[0].password == formState.password) {
+                setUser(() => [
+                    user.documents[0].name,
+                    user.documents[0].surname,
+                    user.documents[0].class,
+                    user.documents[0].subject_points,
+                ]);
+                setIsloading(false);
+                navigate("/");
+            }
         } catch (err) {
             setError(err);
             setIsloading(false);
