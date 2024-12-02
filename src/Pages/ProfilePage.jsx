@@ -11,13 +11,11 @@ const ProfilePage = () => {
         score: "0",
     });
 
-    const [name, surname, regClass, subjects] = user;
-    const subjectArray = subjects
-        .split(",")
-        .map((el) => el.split(`"`)[1])
-        .map((el) => {
-            return { subject: el.split(" ")[0], score: el.split(" ")[2] };
-        });
+    const [name, surname, regClass, subject_points] = user;
+
+    const subjectArray = subject_points.map((el) => {
+        return { subject: el.split(" ")[0], score: el.split(" ")[2] };
+    });
 
     const handleSubjectChange = (e) => {
         setSelectedSubject(() => {
@@ -46,20 +44,21 @@ const ProfilePage = () => {
                 <h4 style={styles.title}>class:</h4>
                 <h3 style={styles.text}>{regClass}</h3>
                 <h4 style={styles.title}>Subjects:</h4>
-
-                {subjectArray.map((el) => {
-                    return (
-                        <h3
-                            key={el.subject}
-                            style={
-                                el.subject == selectedSubject.subject
-                                    ? styles.selectedSubject
-                                    : styles.unselectedSubject
-                            }
-                            onClick={handleSubjectChange}
-                        >{`${el.subject} - ${el.score}`}</h3>
-                    );
-                })}
+                <div style={{ overflowY: "scroll" }}>
+                    {subjectArray.map((el) => {
+                        return (
+                            <h3
+                                key={el.subject}
+                                style={
+                                    el.subject == selectedSubject.subject
+                                        ? styles.selectedSubject
+                                        : styles.unselectedSubject
+                                }
+                                onClick={handleSubjectChange}
+                            >{`${el.subject} - ${el.score}`}</h3>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

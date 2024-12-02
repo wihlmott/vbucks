@@ -33,16 +33,38 @@ export const retreiveSubjects = async () => {
 };
 
 export const retreiveUserToSignIn = async (user) => {
-    const response = await databases.listDocuments(
+    try {
+        const response = await databases.listDocuments(
+            import.meta.env.VITE_DATABASE_ID,
+            import.meta.env.VITE_COLLECTION_ID_USERS
+        );
+
+        if (response.length == 0) throw `user not found`;
+
+        const allMatches = response.documents.filter(
+            (userDB) =>
+                userDB.name.toLowerCase() ==
+                    user.username.split(" ")[0].toLowerCase() &&
+                userDB.surname.toLowerCase() ==
+                    user.username.split(" ")[1].toLowerCase()
+        );
+
+        const validatedUser = allMatches.filter(
+            (match) => match.password === user.password
+        );
+        if (validatedUser.length == 0)
+            throw `username and password does not match`;
+
+        return validatedUser;
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const updateScore = async (userDOC_ID, topic, score) => {
+    const response = await databases.updateDocument(
         import.meta.env.VITE_DATABASE_ID,
-        import.meta.env.VITE_COLLECTION_ID_USERS
+        import.meta.env.VITE_COLLECTION_ID_USERS,
+        userDOC_ID
     );
-
-    const allMatches = response.documents.filter(
-        (userDB) =>
-            userDB.name == user.username.split(" ")[0].toLowerCase() &&
-            userDB.surname == user.username.split(" ")[1].toLowerCase()
-    );
-
-    return allMatches.filter((match) => match.password === user.password);
 };
