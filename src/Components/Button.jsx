@@ -1,6 +1,11 @@
 import { colors } from "../config";
 
-const Button = ({ text = "text", submitHandler = () => {} }) => {
+const Button = ({
+    text = "text",
+    submitHandler = () => {},
+    width = false,
+    cancel = false,
+}) => {
     const color = colors.gradients[0].split(" ")[1];
 
     const sendHandler = (e) => submitHandler(e);
@@ -9,13 +14,13 @@ const Button = ({ text = "text", submitHandler = () => {} }) => {
         <button
             style={{
                 boxSizing: "border-box",
-                backgroundColor: color,
-                width: "240px",
+                backgroundColor: cancel ? "transparent" : color,
+                width: width ? width : "240px",
                 display: "inline-block",
                 padding: "16px",
                 borderRadius: "4px",
                 margin: "8px",
-                color: "white",
+                color: cancel ? "inherit" : "white",
                 textAlign: "center",
                 cursor: "pointer",
             }}

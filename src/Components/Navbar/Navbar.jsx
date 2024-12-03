@@ -2,8 +2,20 @@ import { Link } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
 import { LuLogIn } from "react-icons/lu";
 import { GiNotebook } from "react-icons/gi";
+import ConfirmModal from "../ConfirmModal";
+import { useContext, useState } from "react";
+import { UserContext } from "../../context/context";
 
 const Navbar = () => {
+    const [logoutModal, setLogoutModal] = useState(false);
+    const [_, setUser] = useContext(UserContext);
+
+    const handleClick = (e) => {
+        e == "cancel" && handleLogout();
+        e == "confirm" && setUser("");
+    };
+    const handleLogout = () => setLogoutModal(!logoutModal);
+
     return (
         <div style={styles.navbar}>
             <Link to="./">
@@ -12,9 +24,17 @@ const Navbar = () => {
             <Link to="./subjects">
                 <GiNotebook style={styles.icon} />
             </Link>
-            <Link to="./login">
-                <LuLogIn style={{ ...styles.icon, float: "right" }} />
-            </Link>
+            <LuLogIn
+                style={{ ...styles.icon, float: "right" }}
+                onClick={handleLogout}
+            />
+            {logoutModal && (
+                <ConfirmModal
+                    title={`Sign out`}
+                    message={`you are about to logout`}
+                    sendClick={handleClick}
+                />
+            )}
         </div>
     );
 };

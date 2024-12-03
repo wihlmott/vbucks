@@ -38,7 +38,12 @@ const ProfilePage = () => {
                     points={selectedSubject.score}
                 />
             </div>
-            <div style={{ ...styles.container, ...styles.bottomContainer }}>
+            <div
+                style={{
+                    ...styles.container,
+                    ...styles.bottomContainer,
+                }}
+            >
                 <div style={{ margin: "-65px 0 50px 0", float: "right" }}>
                     <LeaderboardButton />
                 </div>
@@ -47,7 +52,7 @@ const ProfilePage = () => {
                 <h4 style={styles.title}>class:</h4>
                 <h3 style={styles.text}>{regClass}</h3>
                 <h4 style={styles.title}>Subjects:</h4>
-                <div style={{ overflowY: "scroll" }}>
+                <div>
                     {subjectArray.map((el) => {
                         return (
                             <h3
@@ -102,6 +107,7 @@ const styles = {
         boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
         borderRadius: "20px 20px 0px 0px",
         background: "rgba(255,255,255,0.1)",
+        overflowY: "scroll",
     },
     title: {
         color: "rgba(255,255,255,0.9)",

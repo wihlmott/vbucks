@@ -113,8 +113,6 @@ const Question = () => {
                 subject_points,
                 payload.quiz_completed,
             ]);
-            setCounter({ value: 0, max: 0, full: false });
-            setQuizScore(0);
         } catch (error) {
             console.error(error);
         }
@@ -135,6 +133,8 @@ const Question = () => {
     const navigator = useNavigate();
     const closeModal = () => {
         addScoreToDB();
+        setCounter({ value: 0, max: 0, full: false });
+        setQuizScore(0);
         navigator(-1);
     };
 
