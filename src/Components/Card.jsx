@@ -13,6 +13,7 @@ const Card = ({
     icon = false,
     shadowColor = colors.grey,
     progressBar = false,
+    progressBarFull = false,
 }) => {
     const styles = {
         card: {
@@ -81,7 +82,12 @@ const Card = ({
                     </>
                 )}
                 <div style={{ width: "100%" }}>
-                    {progressBar && <ProgressBar value={progressBar} />}
+                    {progressBar && (
+                        <ProgressBar
+                            value={progressBar}
+                            full={progressBarFull}
+                        />
+                    )}
                 </div>
                 {message && <p style={styles.message}>{message}</p>}
             </>

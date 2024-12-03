@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "../Components/ProgressBar";
 import QuestionFooter from "../Components/QuestionFooter/QuestionFooter";
@@ -9,18 +9,24 @@ import Options from "../Components/Options";
 import { usePersistedState } from "../hooks/usePersistedState";
 import { db } from "../database/databases";
 import { Query } from "appwrite";
+import { UserContext } from "../context/context";
 
 const Question = () => {
     const { state } = useLocation();
     const { topic, color } = state;
+    const [user, setUser] = useContext(UserContext);
 
-    //if counter hsa become full, write to db. if value in db exists, don't let it be rewritten. this way, quiz can be redone, but new score won't be saved
+    if (!user) return;
+
+    const [name, surname, regClass, subject_points, quiz_completed] = user;
+    const userID = name.toLowerCase() + surname.toLowerCase();
+
     const [counter, setCounter] = usePersistedState(
-        { topic: topic, value: "counter" },
-        { value: 0, full: false }
+        { user: userID, topic: topic, value: "counter" },
+        { value: 0, max: 0, full: false }
     );
     const [quizScore, setQuizScore] = usePersistedState(
-        { topic: topic, value: "quizScore" },
+        { user: userID, topic: topic, value: "quizScore" },
         0
     );
 
@@ -42,6 +48,9 @@ const Question = () => {
                 isLoading: false,
             };
         });
+        setCounter((prev) => {
+            return { ...prev, max: response.total - 1 };
+        });
     };
     useEffect(() => {
         init();
@@ -57,6 +66,7 @@ const Question = () => {
             reset();
             setCounter((prev) => {
                 return {
+                    ...prev,
                     value: prev.value == 0 ? 0 : prev.value - 1,
                     full: false,
                 };
@@ -73,19 +83,35 @@ const Question = () => {
         }
     };
     const nextQuestion = () => {
+        setQuizScore((prev) => (clicked.status ? prev + 10 : prev + 5));
         setCounter((prev) => {
             reset();
-
-            if (prev.value == quiz.max) {
-                //write to document
-                return { value: quiz.max, full: true };
-            }
-
-            if (prev.value != quiz.max)
-                return { value: prev.value + 1, full: false };
+            return prev.value == quiz.max
+                ? { ...prev, value: quiz.max, full: true }
+                : { ...prev, value: prev.value + 1, full: false };
         });
-        setQuizScore((prev) => (clicked.status ? prev + 10 : prev + 5));
     };
+
+    const addScoreToDB = async () => {
+        if (quiz_completed.find((el) => el.split("-")[0] == topic)) return;
+
+        try {
+            const payload = {
+                quiz_completed: [...quiz_completed, `${topic}-${quizScore}`],
+            };
+            await db.users.update(userID, payload);
+            setUser(() => [
+                name,
+                surname,
+                regClass,
+                subject_points,
+                payload.quiz_completed,
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const reset = () => {
         setClicked({ clicked: "", status: "" });
         setUsableDesc({
@@ -100,7 +126,9 @@ const Question = () => {
         });
     const navigator = useNavigate();
     const closeModal = () => {
-        setCounter({ value: 0, full: false });
+        addScoreToDB();
+        setCounter({ value: 0, max: 0, full: false });
+        setQuizScore(0);
         navigator(-1);
     };
 

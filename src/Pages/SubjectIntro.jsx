@@ -1,13 +1,18 @@
 import { useLocation } from "react-router-dom";
 import Header from "../Components/Header";
 import LinkCard from "../Components/LinkCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Loading from "../Components/Loading";
 import { db } from "../database/databases";
+import { getFromLocalStorage } from "../utils/localStorage";
+import { UserContext } from "../context/context";
 
 const SubjectIntro = () => {
     const { state: subject } = useLocation();
     const [state, setState] = useState({ topics: [], isLoading: true });
+    const [user, _] = useContext(UserContext);
+    const [name, surname, a, b, quiz_completed] = user;
+    const userID = name + surname;
 
     const init = async () => {
         const response = await db.subjects.get(subject.title);
@@ -23,6 +28,16 @@ const SubjectIntro = () => {
             <Loading />
         ) : (
             state.topics.map((topic) => {
+                const progress = getFromLocalStorage(
+                    `${userID}-${topic}-counter`
+                );
+
+                console.log(quiz_completed);
+
+                const full = quiz_completed.find(
+                    (el) => el.split("-")[0] == topic
+                );
+
                 return (
                     <LinkCard
                         key={topic}
@@ -35,12 +50,10 @@ const SubjectIntro = () => {
                         square
                         shadowColor={subject.color.split(" ")[1]}
                         progressBar={{
-                            // done: topic.completed,
-                            // max: topic.questions.length,
-                            //personal profile, must be collected at open. will tract how much completed per quiz
-                            done: 2,
-                            max: 5,
+                            done: progress ? progress.value : 0,
+                            max: progress ? progress.max + 1 : 5,
                         }}
+                        progressBarFull={full}
                     />
                 );
             })

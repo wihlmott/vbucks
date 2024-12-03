@@ -14,7 +14,10 @@ const ProfilePage = () => {
     const [name, surname, regClass, subject_points] = user;
 
     const subjectArray = subject_points.map((el) => {
-        return { subject: el.split(" ")[0], score: el.split(" ")[2] };
+        return {
+            subject: el.replaceAll(" ", "").split("-")[0],
+            score: el.replaceAll(" ", "").split("-")[1],
+        };
     });
 
     const handleSubjectChange = (e) => {

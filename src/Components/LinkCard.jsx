@@ -15,6 +15,7 @@ const LinkCard = ({
     value = false,
     icon = false,
     progressBar = false,
+    progressBarFull = false,
 }) => {
     return (
         <Link to={to} state={state} style={{ textDecoration: "none" }}>
@@ -30,6 +31,7 @@ const LinkCard = ({
                 square={square}
                 icon={icon}
                 progressBar={progressBar}
+                progressBarFull={progressBarFull}
             />
         </Link>
     );
