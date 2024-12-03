@@ -15,3 +15,16 @@ export const usePersistedState = (key, initialValue) => {
 
     return [value, setValue];
 };
+
+export const usePersistUser = (initialValue) => {
+    const [value, setValue] = useState(() => {
+        const item = getFromLocalStorage("user");
+        return item || initialValue;
+    });
+
+    useEffect(() => {
+        setToLocalStorage("user", value);
+    }, [value]);
+
+    return [value, setValue];
+};

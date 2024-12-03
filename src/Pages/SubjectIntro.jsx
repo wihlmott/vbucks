@@ -31,9 +31,6 @@ const SubjectIntro = () => {
                 const progress = getFromLocalStorage(
                     `${userID}-${topic}-counter`
                 );
-
-                console.log(quiz_completed);
-
                 const full = quiz_completed.find(
                     (el) => el.split("-")[0] == topic
                 );

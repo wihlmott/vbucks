@@ -1,10 +1,10 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./utils/router";
-import { useState } from "react";
 import { UserContext } from "./context/context";
+import { usePersistUser } from "./hooks/usePersistedState";
 
 function App() {
-    const [user, setUser] = useState();
+    const [user, setUser] = usePersistUser("");
 
     return (
         <UserContext.Provider value={[user, setUser]}>

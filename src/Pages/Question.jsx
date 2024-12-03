@@ -30,11 +30,17 @@ const Question = () => {
         0
     );
 
-    const [clicked, setClicked] = useState({ clicked: "", status: "" });
-    const [usableDesc, setUsableDesc] = useState({
-        usable: false,
-        open: false,
-    });
+    const [clicked, setClicked] = usePersistedState(
+        { user: userID, topic: topic, value: "clicked" },
+        { clicked: "", status: "" }
+    );
+    const [usableDesc, setUsableDesc] = usePersistedState(
+        { user: userID, topic: topic, value: "desc" },
+        {
+            usable: false,
+            open: false,
+        }
+    );
 
     const [quiz, setQuiz] = useState({ quiz: [], max: 0, isLoading: true });
     const init = async () => {
@@ -107,6 +113,8 @@ const Question = () => {
                 subject_points,
                 payload.quiz_completed,
             ]);
+            setCounter({ value: 0, max: 0, full: false });
+            setQuizScore(0);
         } catch (error) {
             console.error(error);
         }
@@ -127,8 +135,6 @@ const Question = () => {
     const navigator = useNavigate();
     const closeModal = () => {
         addScoreToDB();
-        setCounter({ value: 0, max: 0, full: false });
-        setQuizScore(0);
         navigator(-1);
     };
 
