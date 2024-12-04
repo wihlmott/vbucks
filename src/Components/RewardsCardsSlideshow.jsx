@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
-import Button from "./Button";
 import { colors } from "../config";
 import { db } from "../database/databases";
 import { UserContext } from "../context/context";
+import GlossyButton from "./GlossyButton";
 
 const themeColor = {
     gradient: colors.gradients[0],
@@ -87,7 +87,6 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         },
 
         card: {
-            alignContent: "center",
             position: "absolute",
             margin: "auto",
             height: scale ? "260px" : "240px",
@@ -102,7 +101,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         },
 
         cardImg: {
-            marginTop: scale && error ? "24px" : "0",
+            position: "absolute",
+            top: "0",
+            bottom: "0",
+            margin: "auto",
             width: "125px",
             marginLeft: "30px",
             filter: `drop-shadow(0 30px 20px rgba(255,255,255,0.45))`,
@@ -166,18 +168,34 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                         }
                         <div
                             style={{
+                                position: "absolute",
+                                width: "100%",
                                 scale: ".60",
                                 textAlign: "center",
+                                bottom: "0",
                             }}
                         >
-                            {scale && (
+                            {scale && i == currentIndex && (
                                 <>
-                                    <Button
+                                    <h2
+                                        style={{
+                                            textAlign: "center",
+                                            position: "absolute",
+                                            margin: "0",
+                                            bottom: "340px",
+                                            textShadow:
+                                                "1px 1px 4px rgba(0,0,0,.3)",
+                                        }}
+                                    >
+                                        {reward.id}
+                                    </h2>
+                                    <GlossyButton
                                         text="use"
                                         width="60%"
                                         fontSize="1.3rem"
-                                        margin="0"
                                         borderRadius="12px"
+                                        bottom="0"
+                                        margin="0"
                                         submitHandler={() => {
                                             if (points <= 100)
                                                 setError(
@@ -189,8 +207,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                     {error && (
                                         <p
                                             style={{
+                                                textAlign: "center",
+                                                position: "absolute",
                                                 color: "red",
-                                                margin: "5px 0 0 0",
+                                                margin: "0",
                                             }}
                                         >
                                             {error}
