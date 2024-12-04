@@ -3,6 +3,7 @@ import { colors } from "../config";
 import { db } from "../database/databases";
 import { UserContext } from "../context/context";
 import GlossyButton from "./GlossyButton";
+import { getFormattedDate } from "../utils/helperFunctions";
 
 const themeColor = {
     gradient: colors.gradients[0],
@@ -20,16 +21,13 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     const [scale, setScale] = useState(false);
 
     const updateUsedCards = (reward) => {
-        const today = new Date();
-        const day = today.getDate();
-        const month = today.getMonth() + 1;
-        const year = today.getFullYear();
+        const dateStr = getFormattedDate();
 
         try {
             const payload = {
                 rewards_used: [
                     ...rewards_used,
-                    `${subject}-${reward.id}-${day}${month}${year}`,
+                    `${subject}-${reward.id}-${dateStr}`,
                 ],
             };
             db.users.update(userID, payload);
@@ -109,6 +107,28 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
             marginLeft: "30px",
             filter: `drop-shadow(0 30px 20px rgba(255,255,255,0.45))`,
         },
+
+        cardBig: {
+            position: "absolute",
+            width: "100%",
+            scale: ".60",
+            textAlign: "center",
+            bottom: "0",
+        },
+
+        cardTitle: {
+            textAlign: "center",
+            position: "absolute",
+            margin: "0",
+            bottom: "340px",
+            textShadow: "1px 1px 4px rgba(0,0,0,.3)",
+        },
+        errorMessage: {
+            textAlign: "center",
+            position: "absolute",
+            color: "red",
+            margin: "0",
+        },
     };
 
     return (
@@ -166,27 +186,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                 alt={reward.id}
                             />
                         }
-                        <div
-                            style={{
-                                position: "absolute",
-                                width: "100%",
-                                scale: ".60",
-                                textAlign: "center",
-                                bottom: "0",
-                            }}
-                        >
+                        <div style={styles.cardBig}>
                             {scale && i == currentIndex && (
                                 <>
-                                    <h2
-                                        style={{
-                                            textAlign: "center",
-                                            position: "absolute",
-                                            margin: "0",
-                                            bottom: "340px",
-                                            textShadow:
-                                                "1px 1px 4px rgba(0,0,0,.3)",
-                                        }}
-                                    >
+                                    <h2 style={styles.cardTitle}>
                                         {reward.id}
                                     </h2>
                                     <GlossyButton
@@ -205,14 +208,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                         }}
                                     />
                                     {error && (
-                                        <p
-                                            style={{
-                                                textAlign: "center",
-                                                position: "absolute",
-                                                color: "red",
-                                                margin: "0",
-                                            }}
-                                        >
+                                        <p style={styles.errorMessage}>
                                             {error}
                                         </p>
                                     )}

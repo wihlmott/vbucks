@@ -5,3 +5,12 @@ export const shuffle = (array) => {
     }
     return array;
 };
+
+export const getFormattedDate = () => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+
+    return `${day}${month}${year}`;
+};
