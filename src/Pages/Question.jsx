@@ -13,13 +13,13 @@ import { UserContext } from "../context/context";
 
 const Question = () => {
     const { state } = useLocation();
-    const { topic, color } = state;
+    const { topic, color, subject } = state;
     const [user, setUser] = useContext(UserContext);
 
     if (!user) return;
 
-    const [name, surname, regClass, subject_points, quiz_completed] = user;
-    const userID = name.toLowerCase() + surname.toLowerCase();
+    const [name, surname, regClass, a, quiz_completed] = user;
+    const userID = (name + surname).toLowerCase();
 
     const [counter, setCounter] = usePersistedState(
         { user: userID, topic: topic, value: "counter" },
@@ -103,16 +103,13 @@ const Question = () => {
 
         try {
             const payload = {
-                quiz_completed: [...quiz_completed, `${topic}-${quizScore}`],
+                quiz_completed: [
+                    ...quiz_completed,
+                    `${subject}-${topic}-${quizScore}`,
+                ],
             };
             await db.users.update(userID, payload);
-            setUser(() => [
-                name,
-                surname,
-                regClass,
-                subject_points,
-                payload.quiz_completed,
-            ]);
+            setUser(() => [name, surname, regClass, a, payload.quiz_completed]);
         } catch (error) {
             console.error(error);
         }

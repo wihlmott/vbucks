@@ -51,7 +51,7 @@ const LoginPage = () => {
                     user.documents[0].name,
                     user.documents[0].surname,
                     user.documents[0].class,
-                    user.documents[0].subject_points,
+                    user.documents[0].subjects,
                     user.documents[0].quiz_completed,
                 ]);
                 setIsloading(false);

@@ -1,4 +1,4 @@
-import { themeColor, colors, rewards } from "../config";
+import { themeColor, colors, rewards, subjects } from "../config";
 import RewardsCardsSideshow from "../Components/RewardsCardsSlideshow.jsx";
 import LeaderboardButton from "../Components/LeaderboardButton.jsx";
 import { useContext, useState } from "react";
@@ -11,12 +11,14 @@ const ProfilePage = () => {
         score: "0",
     });
 
-    const [name, surname, regClass, subject_points] = user;
+    const [name, surname, regClass, subjects, quiz_completed] = user;
 
-    const subjectArray = subject_points.map((el) => {
+    const subjectArray = subjects.map((subject) => {
         return {
-            subject: el.replaceAll(" ", "").split("-")[0],
-            score: el.replaceAll(" ", "").split("-")[1],
+            subject: subject,
+            score: quiz_completed
+                .filter((el) => el.split("-")[0] == subject)
+                .reduce((acc, curr) => acc + parseInt(curr.split("-")[2]), 0),
         };
     });
 

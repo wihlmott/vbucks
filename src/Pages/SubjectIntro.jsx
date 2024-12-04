@@ -12,7 +12,7 @@ const SubjectIntro = () => {
     const [state, setState] = useState({ topics: [], isLoading: true });
     const [user, _] = useContext(UserContext);
     const [name, surname, a, b, quiz_completed] = user;
-    const userID = name + surname;
+    const userID = (name + surname).toLowerCase();
 
     const init = async () => {
         const response = await db.subjects.get(subject.title);
@@ -31,8 +31,9 @@ const SubjectIntro = () => {
                 const progress = getFromLocalStorage(
                     `${userID}-${topic}-counter`
                 );
+
                 const full = quiz_completed.find(
-                    (el) => el.split("-")[0] == topic
+                    (el) => el.split("-")[1] == topic
                 );
 
                 return (
@@ -42,6 +43,7 @@ const SubjectIntro = () => {
                         state={{
                             topic: topic,
                             color: subject.color,
+                            subject: subject.title,
                         }}
                         title={topic}
                         square
