@@ -53,6 +53,7 @@ const LoginPage = () => {
                     user.documents[0].class,
                     user.documents[0].subjects,
                     user.documents[0].quiz_completed,
+                    user.documents[0].rewards_used,
                 ]);
                 setIsloading(false);
                 navigate("/");

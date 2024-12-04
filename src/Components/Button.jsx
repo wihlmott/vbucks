@@ -5,6 +5,9 @@ const Button = ({
     submitHandler = () => {},
     width = false,
     cancel = false,
+    fontSize = false,
+    margin = false,
+    borderRadius = false,
 }) => {
     const color = colors.gradients[0].split(" ")[1];
 
@@ -18,8 +21,8 @@ const Button = ({
                 width: width ? width : "240px",
                 display: "inline-block",
                 padding: "16px",
-                borderRadius: "4px",
-                margin: "8px",
+                borderRadius: borderRadius ? borderRadius : "4px",
+                margin: margin ? margin : "8px ",
                 color: cancel ? "inherit" : "white",
                 textAlign: "center",
                 cursor: "pointer",
@@ -27,7 +30,7 @@ const Button = ({
             type="submit"
             onClick={sendHandler}
         >
-            <p style={{ margin: "0" }}>{text}</p>
+            <p style={{ margin: "0", fontSize: fontSize }}>{text}</p>
         </button>
     );
 };

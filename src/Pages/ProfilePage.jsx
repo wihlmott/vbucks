@@ -11,14 +11,21 @@ const ProfilePage = () => {
         score: "0",
     });
 
-    const [name, surname, regClass, subjects, quiz_completed] = user;
+    const [name, surname, regClass, subjects, quiz_completed, rewards_used] =
+        user;
 
     const subjectArray = subjects.map((subject) => {
+        const totalScore = quiz_completed
+            .filter((el) => el.split("-")[0] == subject)
+            .reduce((acc, curr) => acc + parseInt(curr.split("-")[2]), 0);
+
+        const amountOfRewardsCompleted = rewards_used.filter(
+            (el) => el.split("-")[0] == subject
+        ).length;
+
         return {
             subject: subject,
-            score: quiz_completed
-                .filter((el) => el.split("-")[0] == subject)
-                .reduce((acc, curr) => acc + parseInt(curr.split("-")[2]), 0),
+            score: totalScore - amountOfRewardsCompleted * 100,
         };
     });
 
@@ -38,6 +45,7 @@ const ProfilePage = () => {
                 <RewardsCardsSideshow
                     rewards={rewards}
                     points={selectedSubject.score}
+                    subject={selectedSubject.subject}
                 />
             </div>
             <div

@@ -1,27 +1,139 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import Button from "./Button";
 import { colors } from "../config";
+import { db } from "../database/databases";
+import { UserContext } from "../context/context";
+
 const themeColor = {
     gradient: colors.gradients[0],
     color: colors.gradients[0].split(" ")[1],
 };
 
-const RewardsCardsSideshow = ({ rewards, points }) => {
+const RewardsCardsSideshow = ({ rewards, points, subject }) => {
+    const [user, setUser] = useContext(UserContext);
+
+    const [name, surname, a, b, c, rewards_used] = user;
+    const userID = (name + surname).toLowerCase();
+
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [error, setError] = useState();
+    const [scale, setScale] = useState(false);
+
+    const updateUsedCards = (reward) => {
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+
+        try {
+            const payload = {
+                rewards_used: [
+                    ...rewards_used,
+                    `${subject}-${reward.id}-${day}${month}${year}`,
+                ],
+            };
+            db.users.update(userID, payload);
+            setUser(() => [name, surname, a, b, c, payload.rewards_used]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const styles = {
+        overlay: {
+            position: "fixed",
+            top: "0",
+            zIndex: "2",
+            height: "100vh",
+            width: "100vw",
+            background: "rgba(0,0,0,0.2)",
+        },
+        dotsContainer: {
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            position: "absolute",
+            bottom: "0",
+        },
+        dot: {
+            background: "rgba(255,255,255,0.5)",
+            borderRadius: "50%",
+            height: "8px",
+            width: "8px",
+            display: "inline-block",
+            margin: "0 8px",
+            cursor: "pointer",
+        },
+        selectedDot: {
+            background: "rgba(255,255,255,1)",
+        },
+
+        notFocusedCard: {
+            scale: "0.65",
+            zIndex: "1",
+        },
+        focusedCard: {
+            scale: "1",
+            transform: "translateX(0)",
+            background: `rgba(255,255,255,1)`,
+            zIndex: "2",
+        },
+
+        leftCard: {
+            transform: "translateX(-73%)",
+        },
+        rightCard: {
+            transform: "translateX(73%)",
+        },
+
+        card: {
+            alignContent: "center",
+            position: "absolute",
+            margin: "auto",
+            height: scale ? "260px" : "240px",
+            width: "200px",
+            display: "inline",
+            borderRadius: "20px",
+            boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
+            background: `rgba(255,255,255,${true ? "0.3" : "1"})`,
+            cursor: "pointer",
+            transitionProperty: "transform, scale, background",
+            transitionDuration: "0.3s",
+        },
+
+        cardImg: {
+            marginTop: scale && error ? "24px" : "0",
+            width: "125px",
+            marginLeft: "30px",
+            filter: `drop-shadow(0 30px 20px rgba(255,255,255,0.45))`,
+        },
+    };
 
     return (
         <>
+            {scale && (
+                <div
+                    style={styles.overlay}
+                    onClick={() => {
+                        setScale(false);
+                        setError("");
+                    }}
+                />
+            )}
             {rewards.map((reward, i) => {
                 let styleObj = {};
                 if (i == currentIndex)
                     styleObj = {
                         ...styles.card,
                         ...styles.focusedCard,
+                        scale: scale ? "1.75" : "1",
+                        transform: `translateY(${scale ? "30%" : "0"})`,
                         background:
                             points >= 100
                                 ? "orange"
                                 : `linear-gradient(0deg, orange 0%, white ${points}%)`,
-                        transitionProperty: "background",
-                        transitionDuration: "1s",
+                        transitionProperty: "background, scale, transform",
+                        transitionDuration: ".5s",
                     };
                 if (i == currentIndex + 1)
                     styleObj = {
@@ -40,7 +152,10 @@ const RewardsCardsSideshow = ({ rewards, points }) => {
                     <div
                         key={i}
                         style={styleObj}
-                        onClick={() => setCurrentIndex(i)}
+                        onClick={() => {
+                            if (i == currentIndex) setScale(true);
+                            setCurrentIndex(i);
+                        }}
                     >
                         {
                             <img
@@ -49,6 +164,41 @@ const RewardsCardsSideshow = ({ rewards, points }) => {
                                 alt={reward.id}
                             />
                         }
+                        <div
+                            style={{
+                                scale: ".60",
+                                textAlign: "center",
+                            }}
+                        >
+                            {scale && (
+                                <>
+                                    <Button
+                                        text="use"
+                                        width="60%"
+                                        fontSize="1.3rem"
+                                        margin="0"
+                                        borderRadius="12px"
+                                        submitHandler={() => {
+                                            if (points <= 100)
+                                                setError(
+                                                    `need 100 points to use`
+                                                );
+                                            updateUsedCards(reward);
+                                        }}
+                                    />
+                                    {error && (
+                                        <p
+                                            style={{
+                                                color: "red",
+                                                margin: "5px 0 0 0",
+                                            }}
+                                        >
+                                            {error}
+                                        </p>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 );
             })}
@@ -63,72 +213,11 @@ const RewardsCardsSideshow = ({ rewards, points }) => {
                                 : { ...styles.dot, ...styles.selectedDot }
                         }
                         onClick={() => setCurrentIndex(i)}
-                    ></div>
+                    />
                 ))}
             </div>
         </>
     );
-};
-
-const styles = {
-    dotsContainer: {
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        position: "absolute",
-        bottom: "0",
-    },
-    dot: {
-        background: "rgba(255,255,255,0.5)",
-        borderRadius: "50%",
-        height: "8px",
-        width: "8px",
-        display: "inline-block",
-        margin: "0 8px",
-        cursor: "pointer",
-    },
-    selectedDot: {
-        background: "rgba(255,255,255,1)",
-    },
-
-    notFocusedCard: {
-        scale: "0.65",
-        zIndex: "1",
-    },
-    focusedCard: {
-        scale: "1",
-        transform: "translateX(0)",
-        background: `rgba(255,255,255,1)`,
-        zIndex: "2",
-    },
-
-    leftCard: {
-        transform: "translateX(-73%)",
-    },
-    rightCard: {
-        transform: "translateX(73%)",
-    },
-
-    card: {
-        alignContent: "center",
-        position: "absolute",
-        margin: "auto",
-        height: "240px",
-        width: "200px",
-        display: "inline",
-        borderRadius: "20px",
-        boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
-        background: `rgba(255,255,255,${true ? "0.3" : "1"})`,
-        cursor: "pointer",
-        transitionProperty: "transform, scale, background",
-        transitionDuration: "0.3s",
-    },
-
-    cardImg: {
-        width: "140px",
-        marginLeft: "30px",
-        filter: `drop-shadow(0 30px 20px rgba(255,255,255,0.45))`,
-    },
 };
 
 export default RewardsCardsSideshow;
