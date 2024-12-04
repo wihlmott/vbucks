@@ -99,7 +99,7 @@ const Question = () => {
     };
 
     const addScoreToDB = async () => {
-        if (quiz_completed.find((el) => el.split("-")[0] == topic)) return;
+        if (quiz_completed.find((el) => el.split("-")[1] == topic)) return;
 
         try {
             const payload = {
