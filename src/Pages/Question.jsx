@@ -18,7 +18,7 @@ const Question = () => {
 
     if (!user) return;
 
-    const [name, surname, regClass, a, quiz_completed] = user;
+    const [name, surname, regClass, a, quiz_completed, b] = user;
     const userID = (name + surname).toLowerCase();
 
     const [counter, setCounter] = usePersistedState(
@@ -109,7 +109,14 @@ const Question = () => {
                 ],
             };
             await db.users.update(userID, payload);
-            setUser(() => [name, surname, regClass, a, payload.quiz_completed]);
+            setUser(() => [
+                name,
+                surname,
+                regClass,
+                a,
+                payload.quiz_completed,
+                b,
+            ]);
         } catch (error) {
             console.error(error);
         }

@@ -4,6 +4,7 @@ import { db } from "../database/databases";
 import { UserContext } from "../context/context";
 import GlossyButton from "./GlossyButton";
 import { getFormattedDate } from "../utils/helperFunctions";
+import UsedIndication from "./UsedIndication";
 
 const themeColor = {
     gradient: colors.gradients[0],
@@ -15,10 +16,18 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
 
     const [name, surname, a, b, c, rewards_used] = user;
     const userID = (name + surname).toLowerCase();
+    const usedCards = rewards_used.map((reward) => {
+        return {
+            subject: reward.split("-")[0],
+            reward: reward.split("-")[1],
+            date: reward.split("-")[2],
+        };
+    });
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [error, setError] = useState();
     const [scale, setScale] = useState(false);
+    const [pointsState, setPointsState] = useState(points);
 
     const updateUsedCards = (reward) => {
         const dateStr = getFormattedDate();
@@ -32,6 +41,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
             };
             db.users.update(userID, payload);
             setUser(() => [name, surname, a, b, c, payload.rewards_used]);
+            setPointsState((prev) => prev - 100);
         } catch (error) {
             console.error(error);
         }
@@ -186,6 +196,19 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                 alt={reward.id}
                             />
                         }
+                        {usedCards.map((usedCard) => {
+                            if (
+                                usedCard.subject == subject &&
+                                usedCard.reward == reward.id &&
+                                i == currentIndex
+                            )
+                                return (
+                                    <UsedIndication
+                                        date={usedCard.date}
+                                        key={usedCard}
+                                    />
+                                );
+                        })}
                         <div style={styles.cardBig}>
                             {scale && i == currentIndex && (
                                 <>
@@ -200,11 +223,12 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                         bottom="0"
                                         margin="0"
                                         submitHandler={() => {
-                                            if (points <= 100)
+                                            if (pointsState < 100)
                                                 setError(
                                                     `need 100 points to use`
                                                 );
-                                            updateUsedCards(reward);
+                                            if (pointsState >= 100)
+                                                updateUsedCards(reward);
                                         }}
                                     />
                                     {error && (

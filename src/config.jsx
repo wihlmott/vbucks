@@ -4,6 +4,7 @@ import { FcReading } from "react-icons/fc";
 import homeworkIMG from "./assets/Images/homework.png";
 import musicIMG from "./assets/Images/mp3-player.png";
 import freetimeIMG from "./assets/Images/freetime.png";
+import teamworkIMG from "./assets/Images/teamwork.png";
 
 export const colors = {
     grey: "rgba(0, 0, 0, 0.3)",
@@ -32,5 +33,5 @@ export const rewards = [
     { value: "reward1", img: homeworkIMG, id: "homework" },
     { value: "reward2", img: musicIMG, id: "music" },
     { value: "reward3", img: freetimeIMG, id: "freetime" },
-    { value: "reward4", id: "4" },
+    { value: "reward4", img: teamworkIMG, id: "teamwork" },
 ];
