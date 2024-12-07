@@ -32,17 +32,25 @@ const SubjectIntro = () => {
 
     const getNames = async () => {
         const response = (await db.users.list()).documents;
-        const allUsers = response.map((user) => {
-            return {
-                name: user.name,
-                surname: user.surname,
-                quiz_completed: user.quiz_completed.filter(
-                    (el) => el.split("-")[1] == leaderboardState.topic
-                ),
-            };
-        });
+        const allUsers = response
+            .filter(
+                (user) =>
+                    user.quiz_completed.filter(
+                        (quiz_item) =>
+                            quiz_item.split("-")[1] == leaderboardState.topic
+                    ).length != 0
+            ) //remove users who did not do topic
+            .map((user) => {
+                return {
+                    name: user.name,
+                    surname: user.surname,
+                    quiz_completed: user.quiz_completed.filter(
+                        (quiz_item) =>
+                            quiz_item.split("-")[1] == leaderboardState.topic
+                    ),
+                };
+            }); //create array for sort, from db table docs
         const allUsersSorted = sortArray(allUsers);
-
         setLeaderboardState((prev) => {
             return { ...prev, names: allUsersSorted };
         });

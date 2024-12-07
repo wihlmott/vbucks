@@ -9,7 +9,7 @@ const SortedNames = ({ array, mini = false }) => {
             margin: mini ? "0" : "16px 0",
             paddingTop: "24px",
             textShadow: colors.textShadowHeading,
-            fontSize: mini ? ".6" : "auto",
+            fontSize: mini ? ".73rem" : "1.1rem",
         },
         divider: {
             borderBottom: "1px solid rgba(0,0,0,0.3)",
@@ -17,8 +17,8 @@ const SortedNames = ({ array, mini = false }) => {
             left: "0",
             position: "absolute",
         },
-        first: { fontWeight: "bold", fontSize: mini ? ".9rem" : "1.5rem" },
-        second: { fontWeight: "bold", fontSize: mini ? ".75rem" : "1.3rem" },
+        first: { fontWeight: "bold", fontSize: mini ? ".9rem" : "1.35rem" },
+        second: { fontWeight: "bold", fontSize: mini ? ".75rem" : "1.2rem" },
         points: { float: "right", marginRight: "5px" },
     };
     return (
