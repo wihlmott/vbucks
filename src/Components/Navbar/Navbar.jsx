@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
-import { IoHome } from "react-icons/io5";
-import { LuLogIn } from "react-icons/lu";
-import { GiNotebook } from "react-icons/gi";
-import ConfirmModal from "../ConfirmModal";
 import { useContext, useState } from "react";
+import { LuLogIn } from "react-icons/lu";
+import ConfirmModal from "../ConfirmModal";
 import { UserContext } from "../../context/context";
+import { navBarIcons } from "../../config";
 
 const Navbar = () => {
     const [logoutModal, setLogoutModal] = useState(false);
@@ -18,12 +17,14 @@ const Navbar = () => {
 
     return (
         <div style={styles.navbar}>
-            <Link to="./">
-                <IoHome style={{ ...styles.icon, marginLeft: "80px" }} />
-            </Link>
-            <Link to="./subjects">
-                <GiNotebook style={styles.icon} />
-            </Link>
+            <div style={styles.iconContainer}>
+                {navBarIcons.map((icon) => (
+                    <Link key={icon.link} to={icon.link} style={styles.icon}>
+                        {icon.icon}
+                    </Link>
+                ))}
+            </div>
+
             <LuLogIn
                 style={{ ...styles.icon, float: "right" }}
                 onClick={handleLogout}
@@ -41,13 +42,19 @@ const Navbar = () => {
 
 const styles = {
     navbar: {
-        position: "absolute",
+        position: "fixed",
         bottom: "0",
         backgroundColor: "rgba(0,0,0,0)",
         width: "100vw",
         height: "60px",
-        textAlign: "center",
         zIndex: "5",
+        textAlign: "center",
+    },
+    iconContainer: {
+        position: "absolute",
+        display: "inline",
+        transform: "translateX(-50%)",
+        padding: "8px",
     },
     icon: { fontSize: "2.5rem", margin: "12px 8px", color: "black" },
 };

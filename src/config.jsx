@@ -1,6 +1,9 @@
 import { BiMath } from "react-icons/bi";
 import { SlChemistry } from "react-icons/sl";
 import { FcReading } from "react-icons/fc";
+import { IoHome } from "react-icons/io5";
+import { GiNotebook } from "react-icons/gi";
+import { TbScoreboard } from "react-icons/tb";
 import homeworkIMG from "./assets/Images/homework.png";
 import musicIMG from "./assets/Images/mp3-player.png";
 import freetimeIMG from "./assets/Images/freetime.png";
@@ -28,6 +31,12 @@ export const subjects = {
     science: { icon: <SlChemistry />, color: colors.gradients[1] },
     english: { icon: <FcReading />, color: colors.gradients[2] },
 };
+
+export const navBarIcons = [
+    { link: "./", icon: <IoHome /> },
+    { link: "./subjects", icon: <GiNotebook /> },
+    { link: "./leaderboard", icon: <TbScoreboard /> },
+];
 
 export const rewards = [
     { value: "reward1", img: homeworkIMG, id: "homework" },

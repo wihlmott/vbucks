@@ -14,3 +14,18 @@ export const getFormattedDate = () => {
 
     return `${day}${month}${year}`;
 };
+
+export const sortArray = (array) =>
+    array
+        .map((user) => {
+            return {
+                name: user.name,
+                surname: user.surname,
+                totalPoints: user.quiz_completed.reduce(
+                    (acc, curr) => acc + parseInt(curr.split("-")[2]),
+                    0
+                ),
+            };
+        })
+        .sort((a, b) => b.totalPoints - a.totalPoints);
+//array must have object in the form name,surname,quiz_completed

@@ -1,6 +1,5 @@
 import { themeColor, colors, rewards, subjects } from "../config";
 import RewardsCardsSideshow from "../Components/RewardsCardsSlideshow.jsx";
-import LeaderboardButton from "../Components/LeaderboardButton.jsx";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/context.jsx";
 
@@ -54,9 +53,6 @@ const ProfilePage = () => {
                     ...styles.bottomContainer,
                 }}
             >
-                <div style={{ margin: "-65px 0 50px 0", float: "right" }}>
-                    <LeaderboardButton />
-                </div>
                 <h4 style={styles.title}>name:</h4>
                 <h3 style={styles.text}>{`${name} ${surname}`}</h3>
                 <h4 style={styles.title}>class:</h4>

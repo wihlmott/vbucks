@@ -71,12 +71,14 @@ const LoginPage = () => {
                 placeholder={"username"}
                 sendValue={handleChange}
                 type="text"
+                value={formState.username}
             />
             <Input
                 placeholder={"password"}
                 sendValue={handleChange}
                 type="password"
                 error={error}
+                value={formState.password}
             />
             <Button text="submit" submitHandler={submitHandler} />
             {error && <p style={styles.errorText}>{error}</p>}

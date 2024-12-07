@@ -11,6 +11,8 @@ import { db } from "../database/databases";
 import { Query } from "appwrite";
 import { UserContext } from "../context/context";
 
+import Input from "../Components/Input";
+
 const Question = () => {
     const { state } = useLocation();
     const { topic, color, subject } = state;
@@ -34,6 +36,11 @@ const Question = () => {
         { user: userID, topic: topic, value: "clicked" },
         { clicked: "", status: "" }
     );
+    const [input, setInput] = usePersistedState(
+        { user: userID, topic: topic, value: "input" },
+        { input: "", status: "" }
+    );
+
     const [usableDesc, setUsableDesc] = usePersistedState(
         { user: userID, topic: topic, value: "desc" },
         {
@@ -67,6 +74,11 @@ const Question = () => {
             clicked: e.message,
             status: quiz.quiz[counter.value]?.answer.includes(e.message),
         });
+    const handleInput = (e) =>
+        setInput({
+            input: e.value,
+            status: quiz.quiz[counter.value].answer.includes(e.value),
+        });
     const handleNext = (e) => {
         if (e == "left") {
             reset();
@@ -80,7 +92,7 @@ const Question = () => {
             setQuizScore((prev) => (prev <= 0 ? prev : prev - 12));
         }
         if (e == "right") {
-            if (clicked.clicked == "") return;
+            if (clicked.clicked == "" && input.input == "") return;
             setUsableDesc({
                 usable: true,
                 open: false,
@@ -89,7 +101,12 @@ const Question = () => {
         }
     };
     const nextQuestion = () => {
-        setQuizScore((prev) => (clicked.status ? prev + 10 : prev + 5));
+        setQuizScore((prev) => {
+            if (clicked && input.input == "")
+                return clicked.status ? prev + 10 : prev + 5;
+            if (input && clicked.clicked == "")
+                return input.status ? prev + 10 : prev + 5;
+        });
         setCounter((prev) => {
             reset();
             return prev.value == quiz.max
@@ -124,6 +141,7 @@ const Question = () => {
 
     const reset = () => {
         setClicked({ clicked: "", status: "" });
+        setInput({ input: "", status: "" });
         setUsableDesc({
             usable: false,
             open: false,
@@ -142,42 +160,48 @@ const Question = () => {
         navigator(-1);
     };
 
-    const render = () => {
-        return quiz.isLoading ? (
-            <Loading />
-        ) : (
-            <>
-                <QuestionHeader
-                    color={color}
-                    centerText
-                    messageSize={"2rem"}
-                    message={quiz.quiz[counter.value]?.question}
-                    index={counter.value + 1}
-                    total={quiz.quiz.length}
-                    score={quizScore}
+    const render = () => (
+        <>
+            <QuestionHeader
+                color={color}
+                centerText
+                messageSize={"2rem"}
+                message={quiz.quiz[counter.value]?.question}
+                index={counter.value + 1}
+                total={quiz.quiz.length}
+                score={quizScore}
+            />
+            <ProgressBar
+                value={{ max: quiz.quiz.length, done: counter.value }}
+                full={counter.full}
+            />
+            {quiz.quiz[counter.value].type == "multiple_choice" && (
+                <Options
+                    array={quiz.quiz[counter.value].options}
+                    clicked={clicked}
+                    usableDesc={usableDesc}
+                    handleSelection={handleSelection}
                 />
-                <ProgressBar
-                    value={{ max: quiz.quiz.length, done: counter.value }}
-                    full={counter.full}
+            )}
+            {quiz.quiz[counter.value].type == "input" && (
+                <Input
+                    type="text"
+                    placeholder="answer"
+                    widthMax
+                    sendValue={handleInput}
+                    value={input.input ? input.input : ""}
+                    status={input.status}
                 />
-                {
-                    <Options
-                        array={quiz.quiz[counter.value].options}
-                        clicked={clicked}
-                        usableDesc={usableDesc}
-                        handleSelection={handleSelection}
-                    />
-                }
-            </>
-        );
-    };
+            )}
+        </>
+    );
 
     return (
         <>
-            {render()}
+            {quiz.isLoading ? <Loading /> : render()}
             <QuestionFooter
                 leftUSE={counter.value != 0}
-                rightUSE={clicked.clicked}
+                rightUSE={clicked.clicked || input.input}
                 sendClick={handleNext}
                 usableDesc={usableDesc}
                 description={quiz.quiz[counter.value]?.description}

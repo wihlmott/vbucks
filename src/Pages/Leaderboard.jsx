@@ -1,21 +1,35 @@
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
+import Loading from "../Components/Loading";
 import { colors, themeColor } from "../config";
-
-const DUMMY = ["Wihlmott", "Ivan", "Theodore"];
+import { db } from "../database/databases";
+import SortedNames from "../Components/Leaderboard/SortedNames";
+import { sortArray } from "../utils/helperFunctions";
 
 const Leaderboard = () => {
+    const [allUsers, setAllUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const init = async () => {
+        try {
+            const response = await db.users.list();
+            const users = sortArray(response.documents);
+
+            setAllUsers(users);
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        init();
+    }, []);
+
     return (
         <div style={styles.outterDiv}>
             <h2 style={styles.heading}>Leaderboard</h2>
             <div style={styles.container}>
-                <ol style={{ marginTop: "-16px" }}>
-                    {DUMMY.map((name, i) => (
-                        <Fragment key={i}>
-                            <li style={styles.listItem}>{name}</li>
-                            <div style={styles.divider}></div>
-                        </Fragment>
-                    ))}
-                </ol>
+                {loading && <Loading />}
+                {!loading && <SortedNames array={allUsers} />}
             </div>
         </div>
     );
@@ -40,18 +54,6 @@ const styles = {
         boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
         borderRadius: "20px 20px 0px 0px",
         background: "rgba(255,255,255,0.1)",
-    },
-    listItem: {
-        color: "white",
-        margin: "16px 0",
-        paddingTop: "24px",
-        textShadow: colors.textShadowHeading,
-    },
-    divider: {
-        borderBottom: "1px solid rgba(0,0,0,0.3)",
-        width: "100%",
-        left: "0",
-        position: "absolute",
     },
 };
 
