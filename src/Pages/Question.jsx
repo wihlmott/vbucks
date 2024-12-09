@@ -10,8 +10,8 @@ import { usePersistedState } from "../hooks/usePersistedState";
 import { db } from "../database/databases";
 import { Query } from "appwrite";
 import { UserContext } from "../context/context";
-
-import Input from "../Components/Input";
+import { AnswerContext } from "../context/answerContext";
+import DoubleBoxGroup from "../Components/Inputs/DoubleBoxGroup";
 
 const Question = () => {
     const { state } = useLocation();
@@ -36,9 +36,21 @@ const Question = () => {
         { user: userID, topic: topic, value: "clicked" },
         { clicked: "", status: "" }
     );
-    const [input, setInput] = usePersistedState(
+    // const [input, setInput] = usePersistedState(
+    //     { user: userID, topic: topic, value: "input" },
+    //     { input: "", status: "" }
+    // );
+    const [doubleInput, setDoubleInput] = usePersistedState(
         { user: userID, topic: topic, value: "input" },
-        { input: "", status: "" }
+        {
+            firstInputFirstBox: "",
+            firstInputMiddleBox: "=",
+            firstInputLastBox: "",
+            secondInputFirstBox: "",
+            secondInputMiddleBox: "=",
+            secondInputLastBox: "",
+            status: null,
+        }
     );
 
     const [usableDesc, setUsableDesc] = usePersistedState(
@@ -74,11 +86,8 @@ const Question = () => {
             clicked: e.message,
             status: quiz.quiz[counter.value]?.answer.includes(e.message),
         });
-    const handleInput = (e) =>
-        setInput({
-            input: e.value,
-            status: quiz.quiz[counter.value].answer.includes(e.value),
-        });
+    // const handleInput = (e) => {};
+
     const handleNext = (e) => {
         if (e == "left") {
             reset();
@@ -92,7 +101,7 @@ const Question = () => {
             setQuizScore((prev) => (prev <= 0 ? prev : prev - 12));
         }
         if (e == "right") {
-            if (clicked.clicked == "" && input.input == "") return;
+            if (clicked.clicked == "" && doubleInput.status == null) return;
             setUsableDesc({
                 usable: true,
                 open: false,
@@ -101,11 +110,14 @@ const Question = () => {
         }
     };
     const nextQuestion = () => {
+        // console.log(doubleInput);
+        //no visible expression of correct or incorrect on double input
+
         setQuizScore((prev) => {
-            if (clicked && input.input == "")
+            if (clicked && doubleInput.status == null)
                 return clicked.status ? prev + 10 : prev + 5;
-            if (input && clicked.clicked == "")
-                return input.status ? prev + 10 : prev + 5;
+            if (doubleInput.status != null && clicked.clicked == "")
+                return doubleInput.status ? prev + 10 : prev + 5;
         });
         setCounter((prev) => {
             reset();
@@ -141,7 +153,16 @@ const Question = () => {
 
     const reset = () => {
         setClicked({ clicked: "", status: "" });
-        setInput({ input: "", status: "" });
+        setDoubleInput({
+            firstInputFirstBox: "",
+            firstInputMiddleBox: "=",
+            firstInputLastBox: "",
+            secondInputFirstBox: "",
+            secondInputMiddleBox: "=",
+            secondInputLastBox: "",
+            status: null,
+        });
+        // setInput({ input: "", status: "" });
         setUsableDesc({
             usable: false,
             open: false,
@@ -183,15 +204,23 @@ const Question = () => {
                     handleSelection={handleSelection}
                 />
             )}
-            {quiz.quiz[counter.value].type == "input" && (
-                <Input
-                    type="text"
-                    placeholder="answer"
-                    widthMax
-                    sendValue={handleInput}
-                    value={input.input ? input.input : ""}
-                    status={input.status}
-                />
+            {quiz.quiz[counter.value].type == "input_doubleBoxes" && (
+                <AnswerContext.Provider value={[doubleInput, setDoubleInput]}>
+                    <DoubleBoxGroup answer={quiz.quiz[counter.value]?.answer} />
+                </AnswerContext.Provider>
+
+                //single box group
+                // <InputBoxGroup sendAnswer={handleInput} />
+
+                // string inputs
+                // <Input
+                //     type="text"
+                //     placeholder="answer"
+                //     widthMax
+                //     sendValue={handleInput}
+                //     value={input.input ? input.input : ""}
+                //     status={input.status}
+                // />
             )}
         </>
     );
@@ -201,7 +230,7 @@ const Question = () => {
             {quiz.isLoading ? <Loading /> : render()}
             <QuestionFooter
                 leftUSE={counter.value != 0}
-                rightUSE={clicked.clicked || input.input}
+                rightUSE={clicked.clicked || doubleInput.status != null}
                 sendClick={handleNext}
                 usableDesc={usableDesc}
                 description={quiz.quiz[counter.value]?.description}

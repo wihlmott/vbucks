@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import Button from "../Components/Button";
-import Input from "../Components/Input";
+import Input from "../Components/Inputs/Input";
 import Loading from "../Components/Loading";
 import { colors } from "../config";
 import { UserContext } from "../context/context";
@@ -24,6 +24,11 @@ const LoginPage = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+
+        if (formState.username.length == 0) {
+            setError("username cannot be left blank");
+            return;
+        }
 
         if (formState.password.length == 0) {
             setError("password cannot be left blank");

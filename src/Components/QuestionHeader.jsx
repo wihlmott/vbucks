@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { colors } from "../config";
 import Header from "./Header";
 

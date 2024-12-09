@@ -28,14 +28,13 @@ const ProfilePage = () => {
         };
     });
 
-    const handleSubjectChange = (e) => {
+    const handleSubjectChange = (e) =>
         setSelectedSubject(() => {
             return {
                 subject: e.target.innerHTML.split(" ")[0],
                 score: e.target.innerHTML.split(" ")[2],
             };
         });
-    };
 
     return (
         <div style={styles.outterDiv}>

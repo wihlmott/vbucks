@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { colors } from "../config";
 import { db } from "../database/databases";
 import { UserContext } from "../context/context";
@@ -27,7 +27,11 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [error, setError] = useState();
     const [scale, setScale] = useState(false);
+
     const [pointsState, setPointsState] = useState(points);
+    useEffect(() => {
+        setPointsState(points);
+    }, [points]);
 
     const updateUsedCards = (reward) => {
         const dateStr = getFormattedDate();
