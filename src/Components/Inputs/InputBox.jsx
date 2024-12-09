@@ -8,10 +8,6 @@ const InputBox = ({
 }) => {
     const [valueState, setValueState] = useState(value);
 
-    let shadow = "1px 1px 6px rgba(0,0,0,.25)";
-    if (locked.correct == true) shadow = "0px 0px 6px lime";
-    if (locked.correct == false) shadow = "0px 0px 12px rgba(255,0,0,1)";
-
     const handleChange = (e) => {
         if (locked.status) return;
 
@@ -31,7 +27,12 @@ const InputBox = ({
             textAlign: "center",
             fontWeight: "bold",
             fontSize: "1.55rem",
-            boxShadow: shadow,
+            boxShadow:
+                locked.correct == null
+                    ? "1px 1px 6px rgba(0,0,0,.25)"
+                    : locked.correct
+                    ? "0px 0px 6px lime"
+                    : "0px 0px 12px rgba(255,0,0,1)",
         },
     };
 

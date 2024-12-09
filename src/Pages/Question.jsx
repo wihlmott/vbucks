@@ -13,14 +13,16 @@ import { UserContext } from "../context/context";
 import { AnswerContext } from "../context/answerContext";
 import DoubleBoxGroup from "../Components/Inputs/DoubleBoxGroup";
 import InputBoxGroup from "../Components/Inputs/InputBoxGroup";
+import InputString from "../Components/Inputs/InputString";
 
 const Question = () => {
     const { state } = useLocation();
     const { topic, color, subject } = state;
     const [user, setUser] = useContext(UserContext);
 
-    if (!user) return;
-    const [name, surname, regClass, a, quiz_completed, b] = user;
+    if (!user) return; //nav to login
+    const [name, surname, regClass, a, quiz_completed, b, alt_quiz_attempts] =
+        user;
     const userID = (name + surname).toLowerCase();
 
     const [counter, setCounter] = usePersistedState(
@@ -31,12 +33,14 @@ const Question = () => {
         { user: userID, topic: topic, value: "quizScore" },
         0
     );
+    const pointsToAdd = quiz_completed.find((el) => el.split("-")[1] == topic)
+        ? 2
+        : 3;
 
     const [clicked, setClicked] = usePersistedState(
         { user: userID, topic: topic, value: "clicked" },
         { clicked: "", status: null }
     );
-
     const [input, setInput] = usePersistedState(
         { user: userID, topic: topic, value: "input" },
         {
@@ -47,7 +51,6 @@ const Question = () => {
             locked: { status: false, correct: null },
         }
     );
-
     const [doubleInput, setDoubleInput] = usePersistedState(
         { user: userID, topic: topic, value: "doubleInput" },
         {
@@ -61,7 +64,14 @@ const Question = () => {
             locked: { status: false, correct: null },
         }
     );
-
+    const [inputString, setInputString] = usePersistedState(
+        { user: userID, topic: topic, value: "inputString" },
+        {
+            value: "",
+            status: null,
+            locked: { status: false, correct: null },
+        }
+    );
     const [usableDesc, setUsableDesc] = usePersistedState(
         { user: userID, topic: topic, value: "desc" },
         {
@@ -112,7 +122,8 @@ const Question = () => {
             if (
                 clicked.status == null &&
                 input.status == null &&
-                doubleInput.status == null
+                doubleInput.status == null &&
+                inputString.status == null
             )
                 return;
 
@@ -120,15 +131,25 @@ const Question = () => {
                 usable: true,
                 open: false,
             });
-            input.status &&
+
+            input.status != null &&
                 setInput((prev) => {
+                    console.log(prev);
+
                     return {
                         ...prev,
                         locked: { status: true, correct: prev.status },
                     };
                 });
-            doubleInput.status &&
+            doubleInput.status != null &&
                 setDoubleInput((prev) => {
+                    return {
+                        ...prev,
+                        locked: { status: true, correct: prev.status },
+                    };
+                });
+            inputString.status != null &&
+                setInputString((prev) => {
                     return {
                         ...prev,
                         locked: { status: true, correct: prev.status },
@@ -142,22 +163,32 @@ const Question = () => {
             if (
                 clicked.status != null &&
                 input.status == null &&
-                doubleInput.status == null
+                doubleInput.status == null &&
+                inputString.status == null
             )
-                return clicked.status ? prev + 10 : prev + 5;
+                return clicked.status ? prev + pointsToAdd : prev;
 
             if (
                 input.status != null &&
                 clicked.status == null &&
-                doubleInput.status == null
+                doubleInput.status == null &&
+                inputString.status == null
             )
-                return input.status ? prev + 10 : prev + 5;
+                return input.status ? prev + pointsToAdd : prev;
             if (
                 doubleInput.status != null &&
                 clicked.status == null &&
+                input.status == null &&
+                inputString.status == null
+            )
+                return doubleInput.status ? prev + pointsToAdd : prev;
+            if (
+                inputString.status != null &&
+                doubleInput.status == null &&
+                clicked.status == null &&
                 input.status == null
             )
-                return doubleInput.status ? prev + 10 : prev + 5;
+                return inputString.status ? prev + pointsToAdd : prev;
         });
         setCounter((prev) => {
             reset();
@@ -168,7 +199,18 @@ const Question = () => {
     };
 
     const addScoreToDB = async () => {
-        if (quiz_completed.find((el) => el.split("-")[1] == topic)) return;
+        //take all quiz_completed
+        /*check if quiz has already been done, 
+        if true: check which score is greater, add greater score to quiz_completed, add lower score to alt_quiz_attempt*/
+
+        //save quiz completed, remove element, add new element, element that was removed add to other array
+
+        if (
+            quiz_completed
+                .find((el) => el.split("-")[1] == topic)
+                .split("-")[2] >= quizScore
+        )
+            return;
 
         try {
             const payload = {
@@ -185,6 +227,7 @@ const Question = () => {
                 a,
                 payload.quiz_completed,
                 b,
+                alt_quiz_attempts,
             ]);
         } catch (error) {
             console.error(error);
@@ -207,6 +250,11 @@ const Question = () => {
             secondInputFirstBox: "",
             secondInputMiddleBox: "=",
             secondInputLastBox: "",
+            status: null,
+            locked: { status: false, correct: null },
+        });
+        setInputString({
+            value: "",
             status: null,
             locked: { status: false, correct: null },
         });
@@ -261,17 +309,16 @@ const Question = () => {
                     <InputBoxGroup answer={quiz.quiz[counter.value]?.answer} />
                 </AnswerContext.Provider>
             )}
-            {
-                // string inputs
-                // <Input
-                //     type="text"
-                //     placeholder="answer"
-                //     widthMax
-                //     sendValue={handleInput}
-                //     value={input.input ? input.input : ""}
-                //     status={input.status}
-                // />}
-            }
+            {quiz.quiz[counter.value].type == "input_string" && (
+                <AnswerContext.Provider value={[inputString, setInputString]}>
+                    <InputString
+                        answer={quiz.quiz[counter.value]?.answer}
+                        type="text"
+                        placeholder="answer"
+                        width="200px"
+                    />
+                </AnswerContext.Provider>
+            )}
         </>
     );
 
@@ -283,7 +330,8 @@ const Question = () => {
                 rightUSE={
                     clicked.status != null ||
                     input.status != null ||
-                    doubleInput.status != null
+                    doubleInput.status != null ||
+                    inputString.status != null
                 }
                 sendClick={handleNext}
                 usableDesc={usableDesc}

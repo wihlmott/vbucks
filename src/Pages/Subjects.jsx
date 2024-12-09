@@ -19,9 +19,7 @@ const Subjects = () => {
     }, []);
 
     const render = () => {
-        return state.isLoading ? (
-            <Loading />
-        ) : (
+        return (
             <>
                 {state.subjects.map((el) => {
                     const { title, topics } = el;
@@ -50,7 +48,8 @@ const Subjects = () => {
     return (
         <>
             <WelcomeHeader message={"Let's get started with today's quiz..."} />
-            {render()}
+            {state.isLoading && <Loading />}
+            {!state.isLoading && render()}
         </>
     );
 };

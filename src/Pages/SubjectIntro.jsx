@@ -19,7 +19,7 @@ const SubjectIntro = () => {
         names: [],
     });
     const [user, _] = useContext(UserContext);
-    const [name, surname, a, b, quiz_completed] = user;
+    const [name, surname, a, b, quiz_completed, d] = user;
     const userID = (name + surname).toLowerCase();
 
     const init = async () => {

@@ -35,6 +35,20 @@ const QuestionHeader = ({
             textAlign: "center",
             alignContent: "center",
         },
+        messageBox: {
+            boxSizing: "border-box",
+            marginTop: "-20px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            padding: "5px",
+            width: "90%",
+            height: "200px",
+            borderRadius: "25px",
+            background: "white",
+            alignContent: "center",
+            textAlign: "center",
+            overflow: "scroll",
+        },
     };
 
     return (
@@ -59,20 +73,13 @@ const QuestionHeader = ({
                         {score}
                     </h4>
                 </div>
-                <div
-                    style={{
-                        marginTop: "-20px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        width: "90%",
-                        height: "200px",
-                        borderRadius: "25px",
-                        background: "white",
-                        alignContent: "center",
-                        textAlign: "center",
-                    }}
-                >
-                    <h1 style={{ ...styles.text, color: "black" }}>
+                <div style={styles.messageBox}>
+                    <h1
+                        style={{
+                            ...styles.text,
+                            color: "black",
+                        }}
+                    >
                         {message}
                     </h1>
                 </div>
