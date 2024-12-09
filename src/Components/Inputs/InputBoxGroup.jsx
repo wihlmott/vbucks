@@ -1,49 +1,65 @@
-//not used anywhere
-
-import { useState } from "react";
+import { useContext, useState } from "react";
 import InputBox from "./InputBox";
 import SelectInput from "./SelectInput";
+import { AnswerContext } from "../../context/answerContext";
 
-const InputBoxGroup = ({ sendAnswer }) => {
-    const [answer, setAnswer] = useState({ first: "", middle: "=", last: "" });
-
-    const handleAnswer = (e) => {
-        switch (e.place) {
-            case "first":
-                setAnswer((prev) => {
-                    return { ...prev, first: e.value };
-                });
-                break;
-            case "middle":
-                setAnswer((prev) => {
-                    return { ...prev, middle: e.value };
-                });
-                break;
-            case "last":
-                setAnswer((prev) => {
-                    return { ...prev, last: e.value };
-                });
-                break;
-        }
-
-        sendAnswer(answer);
-    };
+const InputBoxGroup = ({ answer }) => {
+    const [input, setInput] = useContext(AnswerContext);
 
     return (
-        <>
+        <span
+            style={{
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+            }}
+        >
             <InputBox
-                sendValue={(e) => handleAnswer({ place: "first", value: e })}
+                locked={input.locked}
+                sendValue={(e) =>
+                    setInput((prev) => {
+                        return {
+                            ...prev,
+                            firstBox: e,
+                            status: answer.includes(
+                                `${e}${prev.middleBox}${prev.lastBox}`
+                            ),
+                        };
+                    })
+                }
             />
             <SelectInput
                 margin="0"
                 values={["=", "<=", "<", ">", ">="]}
-                sendInput={(e) => handleAnswer({ place: "middle", value: e })}
+                locked={input.locked}
+                sendInput={(e) =>
+                    setInput((prev) => {
+                        return {
+                            ...prev,
+                            middleBox: e,
+                            status: answer.includes(
+                                `${prev.firstBox}${e}${prev.lastBox}`
+                            ),
+                        };
+                    })
+                }
             />
             <InputBox
-                margin="0 0 0 44px"
-                sendValue={(e) => handleAnswer({ place: "last", value: e })}
+                margin="0 0 0 46px"
+                locked={input.locked}
+                sendValue={(e) =>
+                    setInput((prev) => {
+                        return {
+                            ...prev,
+                            lastBox: e,
+                            status: answer.includes(
+                                `${prev.firstBox}${prev.middleBox}${e}`
+                            ),
+                        };
+                    })
+                }
             />
-        </>
+        </span>
     );
 };
 

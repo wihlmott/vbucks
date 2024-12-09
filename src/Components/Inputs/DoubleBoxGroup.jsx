@@ -10,7 +10,7 @@ const DoubleBoxGroup = ({ answer }) => {
 
     return (
         <>
-            <span style={{ float: "left", marginLeft: "35px" }}>
+            <span style={styles.leftBox}>
                 <InputBox
                     value={doubleInput.firstInputFirstBox}
                     locked={doubleInput.locked}
@@ -44,7 +44,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     }
                 />
                 <InputBox
-                    margin="0 0 0 44px"
+                    margin="0 0 0 48px"
                     value={doubleInput.firstInputLastBox}
                     locked={doubleInput.locked}
                     sendValue={(e) =>
@@ -60,7 +60,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     }
                 />
             </span>
-            <span style={{ float: "right", marginRight: "35px" }}>
+            <span style={styles.rightBox}>
                 <InputBox
                     value={doubleInput.secondInputFirstBox}
                     locked={doubleInput.locked}
@@ -94,7 +94,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     }
                 />
                 <InputBox
-                    margin="0 0 0 44px"
+                    margin="0 0 0 48px"
                     value={doubleInput.secondInputLastBox}
                     locked={doubleInput.locked}
                     sendValue={(e) =>
@@ -112,6 +112,11 @@ const DoubleBoxGroup = ({ answer }) => {
             </span>
         </>
     );
+};
+
+const styles = {
+    leftBox: { float: "left", marginLeft: "10%" },
+    rightBox: { float: "right", marginRight: "10%" },
 };
 
 export default DoubleBoxGroup;

@@ -4,11 +4,16 @@ const InputBox = ({
     sendValue = () => {},
     margin = false,
     value = false,
-    locked = false,
+    locked = { status: false, correct: null },
 }) => {
     const [valueState, setValueState] = useState(value);
+
+    let shadow = "1px 1px 6px rgba(0,0,0,.25)";
+    if (locked.correct == true) shadow = "0px 0px 6px lime";
+    if (locked.correct == false) shadow = "0px 0px 12px rgba(255,0,0,1)";
+
     const handleChange = (e) => {
-        if (locked) return;
+        if (locked.status) return;
 
         setValueState(e.target.value);
         sendValue(e.target.value);
@@ -17,11 +22,16 @@ const InputBox = ({
     const styles = {
         input: {
             boxSizing: "border-box",
-            width: "40px",
+            width: "44px",
+            height: "43px",
             padding: "10px",
             border: `1px solid rgba(0,0,0,0.4)`,
             borderRadius: "4px",
             margin: margin ? margin : "4px",
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "1.55rem",
+            boxShadow: shadow,
         },
     };
 
