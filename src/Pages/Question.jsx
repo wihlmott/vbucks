@@ -50,6 +50,7 @@ const Question = () => {
             secondInputMiddleBox: "=",
             secondInputLastBox: "",
             status: null,
+            locked: false,
         }
     );
 
@@ -106,11 +107,13 @@ const Question = () => {
                 usable: true,
                 open: false,
             });
+            setDoubleInput((prev) => {
+                return { ...prev, locked: true };
+            });
             usableDesc.usable && nextQuestion();
         }
     };
     const nextQuestion = () => {
-        // console.log(doubleInput);
         //no visible expression of correct or incorrect on double input
 
         setQuizScore((prev) => {
@@ -161,6 +164,7 @@ const Question = () => {
             secondInputMiddleBox: "=",
             secondInputLastBox: "",
             status: null,
+            locked: false,
         });
         // setInput({ input: "", status: "" });
         setUsableDesc({

@@ -9,6 +9,7 @@ const DescriptionBtn = ({
     const styles = {
         btn: {
             display: usable.usable ? "" : "none",
+            backgroundColor: "white",
             textAlign: "center",
             textTransform: "uppercase",
             fontFamily: "sans-serif",

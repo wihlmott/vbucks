@@ -13,7 +13,8 @@ const DoubleBoxGroup = ({ answer }) => {
             <span style={{ float: "left", marginLeft: "35px" }}>
                 <InputBox
                     value={doubleInput.firstInputFirstBox}
-                    sendValue={(e) =>
+                    locked={doubleInput.locked}
+                    sendValue={(e) => {
                         setDoubleInput((prev) => {
                             return {
                                 ...prev,
@@ -22,11 +23,12 @@ const DoubleBoxGroup = ({ answer }) => {
                                     `${e}${prev.firstInputMiddleBox}${prev.firstInputLastBox} and ${prev.secondInputFirstBox}${prev.secondInputMiddleBox}${prev.secondInputLastBox}`
                                 ),
                             };
-                        })
-                    }
+                        });
+                    }}
                 />
                 <SelectInput
                     margin="0"
+                    locked={doubleInput.locked}
                     value={doubleInput.firstInputMiddleBox}
                     values={equalityValues}
                     sendInput={(e) =>
@@ -44,6 +46,7 @@ const DoubleBoxGroup = ({ answer }) => {
                 <InputBox
                     margin="0 0 0 44px"
                     value={doubleInput.firstInputLastBox}
+                    locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
                             return {
@@ -60,6 +63,7 @@ const DoubleBoxGroup = ({ answer }) => {
             <span style={{ float: "right", marginRight: "35px" }}>
                 <InputBox
                     value={doubleInput.secondInputFirstBox}
+                    locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
                             return {
@@ -75,6 +79,7 @@ const DoubleBoxGroup = ({ answer }) => {
                 <SelectInput
                     margin="0"
                     value={doubleInput.secondInputMiddleBox}
+                    locked={doubleInput.locked}
                     values={equalityValues}
                     sendInput={(e) =>
                         setDoubleInput((prev) => {
@@ -91,6 +96,7 @@ const DoubleBoxGroup = ({ answer }) => {
                 <InputBox
                     margin="0 0 0 44px"
                     value={doubleInput.secondInputLastBox}
+                    locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
                             return {

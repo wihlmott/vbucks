@@ -1,8 +1,15 @@
 import { useState } from "react";
 
-const InputBox = ({ sendValue = () => {}, margin = false, value = false }) => {
+const InputBox = ({
+    sendValue = () => {},
+    margin = false,
+    value = false,
+    locked = false,
+}) => {
     const [valueState, setValueState] = useState(value);
     const handleChange = (e) => {
+        if (locked) return;
+
         setValueState(e.target.value);
         sendValue(e.target.value);
     };

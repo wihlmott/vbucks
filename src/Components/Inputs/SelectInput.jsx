@@ -5,6 +5,7 @@ const SelectInput = ({
     sendInput = () => {},
     margin = false,
     values,
+    locked = false,
     value = false,
 }) => {
     const [selectState, setSelectState] = useState({
@@ -12,10 +13,13 @@ const SelectInput = ({
         valueState: value ? value : "=",
     });
 
-    const openList = () =>
+    const openList = () => {
+        if (locked) return;
+
         setSelectState((prev) => {
             return { ...prev, open: !prev.open };
         });
+    };
     const sendValue = (e) => {
         setSelectState((prev) => {
             return { ...prev, valueState: e };
