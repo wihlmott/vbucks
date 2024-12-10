@@ -186,7 +186,9 @@ const QuestionPage = () => {
         const sendToAlt = previouslyDoneQuiz?.split("-")[2] >= quizScore;
         if (!sendToAlt) {
             payloadAlt = {
-                alt_quiz_attempts: [...alt_quiz_attempts, previouslyDoneQuiz],
+                alt_quiz_attempts: previouslyDoneQuiz
+                    ? [...alt_quiz_attempts, previouslyDoneQuiz]
+                    : alt_quiz_attempts,
             };
             payload = {
                 quiz_completed: [
@@ -205,7 +207,7 @@ const QuestionPage = () => {
 
         try {
             !sendToAlt && (await db.users.update(userID, payload));
-            await db.users.update(userID, payloadAlt);
+            previouslyDoneQuiz && (await db.users.update(userID, payloadAlt));
 
             setUser(() => [
                 name,
