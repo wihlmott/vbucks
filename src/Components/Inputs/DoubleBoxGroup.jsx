@@ -2,6 +2,7 @@ import { useContext } from "react";
 import InputBox from "./InputBox";
 import SelectInput from "./SelectInput";
 import { AnswerContext } from "../../context/answerContext";
+import { cleanValue } from "../../utils/helperFunctions";
 
 const equalityValues = ["=", "<=", "<", ">", ">="];
 
@@ -16,6 +17,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     locked={doubleInput.locked}
                     sendValue={(e) => {
                         setDoubleInput((prev) => {
+                            e = cleanValue(e);
                             return {
                                 ...prev,
                                 firstInputFirstBox: e,
@@ -49,6 +51,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
+                            e = cleanValue(e);
                             return {
                                 ...prev,
                                 firstInputLastBox: e,
@@ -66,6 +69,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
+                            e = cleanValue(e);
                             return {
                                 ...prev,
                                 secondInputFirstBox: e,
@@ -99,6 +103,7 @@ const DoubleBoxGroup = ({ answer }) => {
                     locked={doubleInput.locked}
                     sendValue={(e) =>
                         setDoubleInput((prev) => {
+                            e = cleanValue(e);
                             return {
                                 ...prev,
                                 secondInputLastBox: e,

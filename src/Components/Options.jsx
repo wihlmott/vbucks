@@ -1,8 +1,10 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useContext, useMemo } from "react";
 import RadioCard from "./RadioCard";
 import { shuffle } from "../utils/helperFunctions";
+import { AnswerContext } from "../context/answerContext";
 
-const Options = ({ array, clicked, handleSelection, usableDesc }) => {
+const Options = ({ array, answer }) => {
+    const [clicked, setClicked] = useContext(AnswerContext);
     const options = useMemo(() => shuffle(array), [array]);
 
     return (
@@ -10,12 +12,20 @@ const Options = ({ array, clicked, handleSelection, usableDesc }) => {
             {options.map((option, i) => {
                 return (
                     <Fragment key={i}>
-                        {!usableDesc.usable ? (
+                        {!clicked.locked.status ? (
                             <RadioCard
                                 message={option}
                                 square
                                 centerText
-                                onClick={handleSelection}
+                                onClick={(e) =>
+                                    setClicked((prev) => {
+                                        return {
+                                            ...prev,
+                                            clicked: e.message,
+                                            status: answer.includes(e.message),
+                                        };
+                                    })
+                                }
                                 clicked={option == clicked.clicked}
                             />
                         ) : (
@@ -24,7 +34,6 @@ const Options = ({ array, clicked, handleSelection, usableDesc }) => {
                                     message={option}
                                     square
                                     centerText
-                                    onClick={handleSelection}
                                     clicked={option == clicked.clicked}
                                     shadowColor={
                                         clicked.status ? "lime" : "#B00020"

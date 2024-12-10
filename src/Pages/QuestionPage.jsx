@@ -15,12 +15,19 @@ import DoubleBoxGroup from "../Components/Inputs/DoubleBoxGroup";
 import InputBoxGroup from "../Components/Inputs/InputBoxGroup";
 import InputString from "../Components/Inputs/InputString";
 
-const Question = () => {
+const QuestionPage = () => {
     const { state } = useLocation();
     const { topic, color, subject } = state;
     const [user, setUser] = useContext(UserContext);
 
-    if (!user) return; //nav to login
+    const navigator = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigator("/login");
+        }
+    }, [user]);
+    if (!user) return;
+
     const [name, surname, regClass, a, quiz_completed, b, alt_quiz_attempts] =
         user;
     const userID = (name + surname).toLowerCase();
@@ -37,74 +44,103 @@ const Question = () => {
         ? 2
         : 3;
 
+    const clickedInit = {
+        clicked: "",
+        status: null,
+        locked: { status: false, correct: null },
+    };
     const [clicked, setClicked] = usePersistedState(
         { user: userID, topic: topic, value: "clicked" },
-        { clicked: "", status: null }
+        clickedInit
     );
+    const inputInit = {
+        firstBox: "",
+        middleBox: "=",
+        lastBox: "",
+        status: null,
+        locked: { status: false, correct: null },
+    };
     const [input, setInput] = usePersistedState(
         { user: userID, topic: topic, value: "input" },
-        {
-            firstBox: "",
-            middleBox: "=",
-            lastBox: "",
-            status: null,
-            locked: { status: false, correct: null },
-        }
+        inputInit
     );
+    const doubleInputInit = {
+        firstInputFirstBox: "",
+        firstInputMiddleBox: "=",
+        firstInputLastBox: "",
+        secondInputFirstBox: "",
+        secondInputMiddleBox: "=",
+        secondInputLastBox: "",
+        status: null,
+        locked: { status: false, correct: null },
+    };
     const [doubleInput, setDoubleInput] = usePersistedState(
         { user: userID, topic: topic, value: "doubleInput" },
-        {
-            firstInputFirstBox: "",
-            firstInputMiddleBox: "=",
-            firstInputLastBox: "",
-            secondInputFirstBox: "",
-            secondInputMiddleBox: "=",
-            secondInputLastBox: "",
-            status: null,
-            locked: { status: false, correct: null },
-        }
+        doubleInputInit
     );
+    const inputStringInit = {
+        value: "",
+        status: null,
+        locked: { status: false, correct: null },
+    };
     const [inputString, setInputString] = usePersistedState(
         { user: userID, topic: topic, value: "inputString" },
-        {
-            value: "",
-            status: null,
-            locked: { status: false, correct: null },
-        }
+        inputStringInit
     );
+    const usableDescInit = {
+        usable: false,
+        open: false,
+    };
     const [usableDesc, setUsableDesc] = usePersistedState(
         { user: userID, topic: topic, value: "desc" },
-        {
-            usable: false,
-            open: false,
-        }
+        usableDescInit
     );
 
+    const quiz_types = [
+        { type: "multiple_choice", value: clicked, setter: setClicked },
+        {
+            type: "input_doubleBoxes",
+            value: doubleInput,
+            setter: setDoubleInput,
+        },
+        { type: "input_singleBoxes", value: input, setter: setInput },
+        { type: "input_string", value: inputString, setter: setInputString },
+    ];
     const [quiz, setQuiz] = useState({ quiz: [], max: 0, isLoading: true });
     const init = async () => {
-        const response = await db.questions.list([
-            Query.equal("quiz_title", [`${topic}`]),
-        ]);
-        setQuiz(() => {
-            return {
-                quiz: response.documents,
-                max: response.total - 1,
-                isLoading: false,
-            };
-        });
-        setCounter((prev) => {
-            return { ...prev, max: response.total - 1 };
-        });
+        try {
+            const response = await db.questions.list([
+                Query.equal("quiz_title", [`${topic}`]),
+            ]);
+            setQuiz(() => {
+                return {
+                    quiz: response.documents,
+                    max: response.total - 1,
+                    isLoading: false,
+                };
+            });
+            setCounter((prev) => {
+                return { ...prev, max: response.total - 1 };
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
     useEffect(() => {
         init();
     }, []);
 
-    const handleSelection = (e) =>
-        setClicked({
-            clicked: e.message,
-            status: quiz.quiz[counter.value]?.answer.includes(e.message),
+    const lockAnswer = (object, method) =>
+        object.status != null &&
+        method((prev) => {
+            return {
+                ...prev,
+                locked: { status: true, correct: prev.status },
+            };
         });
+    const currentQuestion = quiz_types.filter(
+        (el) => quiz.quiz[counter.value]?.type == el.type
+    )[0];
 
     const handleNext = (e) => {
         if (e == "left") {
@@ -116,80 +152,23 @@ const Question = () => {
                     full: false,
                 };
             });
-            setQuizScore((prev) => (prev <= 0 ? prev : prev - 12));
+            setQuizScore((prev) => (prev <= 0 ? prev : prev - pointsToAdd));
         }
         if (e == "right") {
-            if (
-                clicked.status == null &&
-                input.status == null &&
-                doubleInput.status == null &&
-                inputString.status == null
-            )
-                return;
+            if (currentQuestion.value.status == null) return;
 
             setUsableDesc({
                 usable: true,
                 open: false,
             });
-
-            input.status != null &&
-                setInput((prev) => {
-                    console.log(prev);
-
-                    return {
-                        ...prev,
-                        locked: { status: true, correct: prev.status },
-                    };
-                });
-            doubleInput.status != null &&
-                setDoubleInput((prev) => {
-                    return {
-                        ...prev,
-                        locked: { status: true, correct: prev.status },
-                    };
-                });
-            inputString.status != null &&
-                setInputString((prev) => {
-                    return {
-                        ...prev,
-                        locked: { status: true, correct: prev.status },
-                    };
-                });
+            lockAnswer(currentQuestion.value, currentQuestion.setter);
             usableDesc.usable && nextQuestion();
         }
     };
     const nextQuestion = () => {
-        setQuizScore((prev) => {
-            if (
-                clicked.status != null &&
-                input.status == null &&
-                doubleInput.status == null &&
-                inputString.status == null
-            )
-                return clicked.status ? prev + pointsToAdd : prev;
-
-            if (
-                input.status != null &&
-                clicked.status == null &&
-                doubleInput.status == null &&
-                inputString.status == null
-            )
-                return input.status ? prev + pointsToAdd : prev;
-            if (
-                doubleInput.status != null &&
-                clicked.status == null &&
-                input.status == null &&
-                inputString.status == null
-            )
-                return doubleInput.status ? prev + pointsToAdd : prev;
-            if (
-                inputString.status != null &&
-                doubleInput.status == null &&
-                clicked.status == null &&
-                input.status == null
-            )
-                return inputString.status ? prev + pointsToAdd : prev;
-        });
+        setQuizScore((prev) =>
+            currentQuestion.value.status ? prev + pointsToAdd : prev
+        );
         setCounter((prev) => {
             reset();
             return prev.value == quiz.max
@@ -235,45 +214,73 @@ const Question = () => {
     };
 
     const reset = () => {
-        setClicked({ clicked: "", status: null });
-        setInput({
-            firstBox: "",
-            middleBox: "=",
-            lastBox: "",
-            status: null,
-            locked: { status: false, correct: null },
-        });
-        setDoubleInput({
-            firstInputFirstBox: "",
-            firstInputMiddleBox: "=",
-            firstInputLastBox: "",
-            secondInputFirstBox: "",
-            secondInputMiddleBox: "=",
-            secondInputLastBox: "",
-            status: null,
-            locked: { status: false, correct: null },
-        });
-        setInputString({
-            value: "",
-            status: null,
-            locked: { status: false, correct: null },
-        });
-        setUsableDesc({
-            usable: false,
-            open: false,
-        });
+        setClicked(clickedInit);
+        setInput(inputInit);
+        setDoubleInput(doubleInputInit);
+        setInputString(inputStringInit);
+        setUsableDesc(usableDescInit);
     };
+
     const openDescHandler = () =>
         setUsableDesc({
             usable: true,
             open: true,
         });
-    const navigator = useNavigate();
     const closeModal = () => {
         addScoreToDB();
         setCounter({ value: 0, max: 0, full: false });
         setQuizScore(0);
         navigator(-1);
+    };
+
+    const question = (type) => {
+        switch (type) {
+            case "multiple_choice":
+                return (
+                    <AnswerContext.Provider value={[clicked, setClicked]}>
+                        <Options
+                            array={quiz.quiz[counter.value].options}
+                            answer={quiz.quiz[counter.value]?.answer}
+                            usableDesc={usableDesc}
+                        />
+                    </AnswerContext.Provider>
+                );
+            case "input_doubleBoxes":
+                return (
+                    <AnswerContext.Provider
+                        value={[doubleInput, setDoubleInput]}
+                    >
+                        <DoubleBoxGroup
+                            answer={quiz.quiz[counter.value]?.answer}
+                        />
+                    </AnswerContext.Provider>
+                );
+            case "input_singleBoxes":
+                return (
+                    <AnswerContext.Provider value={[input, setInput]}>
+                        <InputBoxGroup
+                            answer={quiz.quiz[counter.value]?.answer}
+                        />
+                    </AnswerContext.Provider>
+                );
+
+            case "input_string":
+                return (
+                    <AnswerContext.Provider
+                        value={[inputString, setInputString]}
+                    >
+                        <InputString
+                            answer={quiz.quiz[counter.value]?.answer}
+                            type="text"
+                            placeholder="answer"
+                            width="200px"
+                        />
+                    </AnswerContext.Provider>
+                );
+
+            default:
+                break;
+        }
     };
 
     const render = () => (
@@ -291,34 +298,7 @@ const Question = () => {
                 value={{ max: quiz.quiz.length, done: counter.value }}
                 full={counter.full}
             />
-            {quiz.quiz[counter.value].type == "multiple_choice" && (
-                <Options
-                    array={quiz.quiz[counter.value].options}
-                    clicked={clicked}
-                    usableDesc={usableDesc}
-                    handleSelection={handleSelection}
-                />
-            )}
-            {quiz.quiz[counter.value].type == "input_doubleBoxes" && (
-                <AnswerContext.Provider value={[doubleInput, setDoubleInput]}>
-                    <DoubleBoxGroup answer={quiz.quiz[counter.value]?.answer} />
-                </AnswerContext.Provider>
-            )}
-            {quiz.quiz[counter.value].type == "input_singleBoxes" && (
-                <AnswerContext.Provider value={[input, setInput]}>
-                    <InputBoxGroup answer={quiz.quiz[counter.value]?.answer} />
-                </AnswerContext.Provider>
-            )}
-            {quiz.quiz[counter.value].type == "input_string" && (
-                <AnswerContext.Provider value={[inputString, setInputString]}>
-                    <InputString
-                        answer={quiz.quiz[counter.value]?.answer}
-                        type="text"
-                        placeholder="answer"
-                        width="200px"
-                    />
-                </AnswerContext.Provider>
-            )}
+            {question(quiz.quiz[counter.value].type)}
         </>
     );
 
@@ -351,4 +331,4 @@ const Question = () => {
     );
 };
 
-export default Question;
+export default QuestionPage;

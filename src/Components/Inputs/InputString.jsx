@@ -1,13 +1,8 @@
 import { useContext } from "react";
 import { AnswerContext } from "../../context/answerContext";
+import { cleanString } from "../../utils/helperFunctions";
 
-const InputString = ({
-    answer,
-    placeholder = false,
-    type,
-    error = false,
-    width = false,
-}) => {
+const InputString = ({ answer, placeholder = false, type, width = false }) => {
     const [inputString, setInputString] = useContext(AnswerContext);
 
     const handleChange = (e) => {
@@ -17,7 +12,7 @@ const InputString = ({
             return {
                 ...prev,
                 value: e.target.value,
-                status: answer.includes(e.target.value),
+                status: answer.includes(cleanString(e.target.value)),
             };
         });
     };

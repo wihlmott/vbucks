@@ -5,7 +5,7 @@ import Layout from "../Components/Layout.jsx";
 import ProfilePage from "../Pages/ProfilePage.jsx";
 import Subjects from "../Pages/Subjects.jsx";
 import SubjectIntro from "../Pages/SubjectIntro.jsx";
-import Question from "../Pages/Question.jsx";
+import QuestionPage from "../Pages/QuestionPage.jsx";
 import LoginPage from "../Pages/LoginPage.jsx";
 import Leaderboard from "../Pages/Leaderboard.jsx";
 
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/question",
-        element: <Question />,
+        element: <QuestionPage />,
     },
     {
         path: "/login",

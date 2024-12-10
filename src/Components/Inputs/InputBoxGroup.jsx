@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import InputBox from "./InputBox";
 import SelectInput from "./SelectInput";
 import { AnswerContext } from "../../context/answerContext";
+import { cleanValue } from "../../utils/helperFunctions";
 
 const InputBoxGroup = ({ answer }) => {
     const [input, setInput] = useContext(AnswerContext);
@@ -16,8 +17,10 @@ const InputBoxGroup = ({ answer }) => {
         >
             <InputBox
                 locked={input.locked}
+                value={input.firstBox}
                 sendValue={(e) =>
                     setInput((prev) => {
+                        e = cleanValue(e);
                         return {
                             ...prev,
                             firstBox: e,
@@ -31,6 +34,7 @@ const InputBoxGroup = ({ answer }) => {
             <SelectInput
                 margin="0"
                 values={["=", "<=", "<", ">", ">="]}
+                value={input.middleBox}
                 locked={input.locked}
                 sendInput={(e) =>
                     setInput((prev) => {
@@ -47,8 +51,10 @@ const InputBoxGroup = ({ answer }) => {
             <InputBox
                 margin="0 0 0 46px"
                 locked={input.locked}
+                value={input.lastBox}
                 sendValue={(e) =>
                     setInput((prev) => {
+                        e = cleanValue(e);
                         return {
                             ...prev,
                             lastBox: e,

@@ -29,3 +29,13 @@ export const sortArray = (array) =>
         })
         .sort((a, b) => b.totalPoints - a.totalPoints);
 //array must have object in the form name,surname,quiz_completed
+
+export const cleanString = (string) =>
+    string
+        .replaceAll(" ", "")
+        .replaceAll(".", "")
+        .replaceAll("-", "")
+        .replaceAll("_", "");
+
+export const cleanValue = (string) =>
+    string.replaceAll(" ", "").replaceAll(".", "").replaceAll("_", "");
