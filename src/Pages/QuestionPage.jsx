@@ -14,6 +14,7 @@ import { AnswerContext } from "../context/answerContext";
 import DoubleBoxGroup from "../Components/Inputs/DoubleBoxGroup";
 import InputBoxGroup from "../Components/Inputs/InputBoxGroup";
 import InputString from "../Components/Inputs/InputString";
+import { getFormattedDate } from "../utils/helperFunctions";
 
 const QuestionPage = () => {
     const { state } = useLocation();
@@ -40,9 +41,6 @@ const QuestionPage = () => {
         { user: userID, topic: topic, value: "quizScore" },
         0
     );
-    const pointsToAdd = quiz_completed.find((el) => el.split("-")[1] == topic)
-        ? 2
-        : 3;
 
     const clickedInit = {
         clicked: "",
@@ -138,6 +136,12 @@ const QuestionPage = () => {
                 locked: { status: true, correct: prev.status },
             };
         });
+
+    const previouslyDoneQuiz = quiz_completed.find(
+        (el) => el.split("-")[1] == topic
+    );
+    const pointsToAdd = previouslyDoneQuiz ? 2 : 3;
+
     const currentQuestion = quiz_types.filter(
         (el) => quiz.quiz[counter.value]?.type == el.type
     )[0];
@@ -178,35 +182,39 @@ const QuestionPage = () => {
     };
 
     const addScoreToDB = async () => {
-        //take all quiz_completed
-        /*check if quiz has already been done, 
-        if true: check which score is greater, add greater score to quiz_completed, add lower score to alt_quiz_attempt*/
-
-        //save quiz completed, remove element, add new element, element that was removed add to other array
-
-        if (
-            quiz_completed
-                .find((el) => el.split("-")[1] == topic)
-                .split("-")[2] >= quizScore
-        )
-            return;
-
-        try {
-            const payload = {
+        let payload, payloadAlt;
+        const sendToAlt = previouslyDoneQuiz?.split("-")[2] >= quizScore;
+        if (!sendToAlt) {
+            payloadAlt = {
+                alt_quiz_attempts: [...alt_quiz_attempts, previouslyDoneQuiz],
+            };
+            payload = {
                 quiz_completed: [
-                    ...quiz_completed,
-                    `${subject}-${topic}-${quizScore}`,
+                    ...quiz_completed.filter((el) => el != previouslyDoneQuiz),
+                    `${subject}-${topic}-${quizScore}-${getFormattedDate()}`,
                 ],
             };
-            await db.users.update(userID, payload);
+        }
+        if (sendToAlt)
+            payloadAlt = {
+                alt_quiz_attempts: [
+                    ...alt_quiz_attempts,
+                    `${subject}-${topic}-${quizScore}-${getFormattedDate()}`,
+                ],
+            };
+
+        try {
+            !sendToAlt && (await db.users.update(userID, payload));
+            await db.users.update(userID, payloadAlt);
+
             setUser(() => [
                 name,
                 surname,
                 regClass,
                 a,
-                payload.quiz_completed,
+                sendToAlt ? quiz_completed : payload.quiz_completed,
                 b,
-                alt_quiz_attempts,
+                payloadAlt.alt_quiz_attempts,
             ]);
         } catch (error) {
             console.error(error);
