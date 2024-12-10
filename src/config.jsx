@@ -4,10 +4,12 @@ import { FcReading } from "react-icons/fc";
 import { IoHome } from "react-icons/io5";
 import { GiNotebook } from "react-icons/gi";
 import { TbScoreboard } from "react-icons/tb";
+import { PiNotepadBold } from "react-icons/pi";
 import homeworkIMG from "./assets/Images/homework.png";
 import musicIMG from "./assets/Images/mp3-player.png";
 import freetimeIMG from "./assets/Images/freetime.png";
 import teamworkIMG from "./assets/Images/teamwork.png";
+import { FaUserPlus } from "react-icons/fa";
 
 export const colors = {
     grey: "rgba(0, 0, 0, 0.3)",
@@ -36,6 +38,11 @@ export const navBarIcons = [
     { link: "./", icon: <IoHome /> },
     { link: "./subjects", icon: <GiNotebook /> },
     { link: "./leaderboard", icon: <TbScoreboard /> },
+];
+
+export const teacherNavBarIcons = [
+    { link: "/teacher/newquiz", icon: <PiNotepadBold /> },
+    { link: "/teacher/newlearner", icon: <FaUserPlus /> },
 ];
 
 export const rewards = [
