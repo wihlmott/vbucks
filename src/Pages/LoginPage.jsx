@@ -58,8 +58,6 @@ const LoginPage = () => {
             if (user.documents[0].password != formState.password)
                 throw `username and password don't match`;
             if (user.documents[0].password == formState.password) {
-                console.log(user);
-
                 teacherView
                     ? setUser(() => [
                           "teacher",

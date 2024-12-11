@@ -51,3 +51,42 @@ export const rewards = [
     { value: "reward3", img: freetimeIMG, id: "freetime" },
     { value: "reward4", img: teamworkIMG, id: "teamwork" },
 ];
+
+export const newQuizQuestions = [
+    {
+        value: "subject",
+        type: "dropdown",
+        options: [
+            { text: "mathematics", element: "mathematics" },
+            { text: "english", element: "english" },
+            { text: "science", element: "science" },
+            { text: "EGD", element: "egd" },
+        ],
+    },
+    { value: "quiz_title", type: "find_input", message: "eg. algebra_q1" },
+    {
+        value: "type_of_question",
+        type: "dropdown",
+        options: [
+            { text: "multiple choice", element: "multiple_choice" },
+            { text: "input two equation", element: "input_doubleBoxes" },
+            { text: "input one equation", element: "input_singleBoxes" },
+            { text: "word or phrase", element: "input_string" },
+        ],
+    },
+    { value: "question", type: "input" },
+    {
+        value: "answer",
+        type: "input",
+        message: "seperate multiple answers with a comma(,)",
+    },
+    {
+        value: "options",
+        type: "input",
+        message: "seperate multiple options with a comma(,)",
+    },
+    {
+        value: "description",
+        type: "long_input",
+    },
+];

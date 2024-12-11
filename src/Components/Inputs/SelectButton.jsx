@@ -1,5 +1,10 @@
 const SelectButton = ({ value, sendValue }) => {
-    const handleClick = () => sendValue(value);
+    console.log("value: " + value);
+
+    const handleClick = () => {
+        console.log(`clicked`);
+        sendValue(value);
+    };
 
     return (
         <div style={styles.input} onClick={handleClick}>

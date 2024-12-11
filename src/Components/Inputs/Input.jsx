@@ -3,6 +3,7 @@ const Input = ({
     widthMax = false,
     placeholder = false,
     value = "",
+    long = false,
     type,
     error = false,
     sendValue = () => {},
@@ -21,7 +22,15 @@ const Input = ({
         },
     };
 
-    return (
+    return long ? (
+        <textarea
+            type={type}
+            style={styles.input}
+            placeholder={placeholder}
+            value={value}
+            onChange={handleChange}
+        />
+    ) : (
         <input
             type={type}
             style={styles.input}

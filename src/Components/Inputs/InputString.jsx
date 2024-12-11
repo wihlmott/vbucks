@@ -9,10 +9,16 @@ const InputString = ({ answer, placeholder = false, type, width = false }) => {
         if (inputString.locked.status) return;
 
         setInputString((prev) => {
+            console.log(prev);
+            console.log(e.target.value);
+            console.log(answer);
+
             return {
                 ...prev,
                 value: e.target.value,
-                status: answer.includes(cleanString(e.target.value)),
+                status: answer
+                    .map((answer) => cleanString(answer))
+                    .includes(cleanString(e.target.value)),
             };
         });
     };

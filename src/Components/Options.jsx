@@ -1,6 +1,6 @@
 import { Fragment, useContext, useMemo } from "react";
 import RadioCard from "./RadioCard";
-import { shuffle } from "../utils/helperFunctions";
+import { cleanValue, shuffle } from "../utils/helperFunctions";
 import { AnswerContext } from "../context/answerContext";
 
 const Options = ({ array, answer }) => {
@@ -22,7 +22,9 @@ const Options = ({ array, answer }) => {
                                         return {
                                             ...prev,
                                             clicked: e.message,
-                                            status: answer.includes(e.message),
+                                            status: answer.includes(
+                                                cleanValue(e.message)
+                                            ),
                                         };
                                     })
                                 }

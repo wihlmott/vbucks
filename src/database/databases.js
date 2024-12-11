@@ -1,4 +1,4 @@
-import { databases } from "./appwrite.js";
+import { databases, ID } from "./appwrite.js";
 
 const db = {};
 
@@ -27,6 +27,8 @@ const collections = [
 
 collections.forEach((col) => {
     db[col.name] = {
+        create: (payload) =>
+            databases.createDocument(col.dbID, col.id, ID.unique(), payload),
         update: (id, payload) =>
             databases.updateDocument(col.dbID, col.id, id, payload),
         list: (queries = []) =>
