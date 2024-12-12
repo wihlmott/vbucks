@@ -16,7 +16,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
 
     const [name, surname, a, b, c, rewards_used] = user;
     const userID = (name + surname).toLowerCase();
-    const usedCards = rewards_used.map((reward) => {
+    const usedCards = rewards_used?.map((reward) => {
         return {
             subject: reward.split("-")[0],
             reward: reward.split("-")[1],
@@ -200,7 +200,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                 alt={reward.id}
                             />
                         }
-                        {usedCards.map((usedCard) => {
+                        {usedCards?.map((usedCard) => {
                             if (
                                 usedCard.subject == subject &&
                                 usedCard.reward == reward.id &&

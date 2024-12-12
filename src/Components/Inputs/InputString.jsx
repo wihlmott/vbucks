@@ -9,10 +9,6 @@ const InputString = ({ answer, placeholder = false, type, width = false }) => {
         if (inputString.locked.status) return;
 
         setInputString((prev) => {
-            console.log(prev);
-            console.log(e.target.value);
-            console.log(answer);
-
             return {
                 ...prev,
                 value: e.target.value,

@@ -1,10 +1,17 @@
 import { themeColor, colors, rewards, subjects } from "../config";
 import RewardsCardsSideshow from "../Components/RewardsCardsSlideshow.jsx";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/context.jsx";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
     const [user, _] = useContext(UserContext);
+
+    const navigator = useNavigate();
+    useEffect(() => {
+        if (user[0] == "teacher") navigator("/login");
+    }, [user]);
+
     const [selectedSubject, setSelectedSubject] = useState({
         subject: "",
         score: "0",
@@ -13,7 +20,7 @@ const ProfilePage = () => {
     const [name, surname, regClass, subjects, quiz_completed, rewards_used] =
         user;
 
-    const subjectArray = subjects.map((subject) => {
+    const subjectArray = subjects?.map((subject) => {
         const totalScore = quiz_completed
             .filter((el) => el.split("-")[0] == subject)
             .reduce((acc, curr) => acc + parseInt(curr.split("-")[2]), 0);
@@ -58,7 +65,7 @@ const ProfilePage = () => {
                 <h3 style={styles.text}>{regClass}</h3>
                 <h4 style={styles.title}>Subjects:</h4>
                 <div>
-                    {subjectArray.map((el) => {
+                    {subjectArray?.map((el) => {
                         return (
                             <h3
                                 key={el.subject}

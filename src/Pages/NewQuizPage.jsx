@@ -9,6 +9,7 @@ import { newQuizQuestions } from "../config";
 import { db } from "../database/databases";
 import SearchedQuizTitles from "../Components/NewQuiz/SearchedQuizTitles";
 import { Query } from "appwrite";
+import ConfirmNotification from "../Components/ConfirmNotification";
 
 const NewQuizPage = () => {
     const [user, _] = useContext(UserContext);
@@ -24,6 +25,8 @@ const NewQuizPage = () => {
         options: [],
         description: "",
     };
+    const initialConfirm = { status: null, message: null };
+    const [confirm, setConfirm] = useState(initialConfirm);
     const [newQuiz, setNewQuiz] = usePersistedState(
         { user: userID, topic: "new", value: "quiz" },
         initialNewQuiz
@@ -47,11 +50,26 @@ const NewQuizPage = () => {
         });
     }, [newQuiz.type_of_question]);
 
-    const returnSearch = (e) =>
+    const returnSearch = (e) => {
+        const amountPerTitle = e.map((title) => {
+            return {
+                title: title.quiz_title,
+                amount: e.filter((el) => el.quiz_title == title.quiz_title)
+                    .length,
+            };
+        });
+        const amountsSet = amountPerTitle.filter(
+            (obj1, i, arr) =>
+                arr.findIndex((obj2) => obj2.title === obj1.title) === i
+        );
+
+        // const titleSet = [...new Set(amountPerTitle.map((el) => el.title))];
+
         setExistingQuizTitles({
             show: true,
-            values: [...new Set(e.map((el) => el.quiz_title))],
+            values: amountsSet,
         });
+    };
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -89,22 +107,29 @@ const NewQuizPage = () => {
                     : [...response.quiz_titles, newQuiz.quiz_title],
             };
             await db.subjects.update(newQuiz.subject, payloadSubject);
-            //add confirmation of upload
+            setConfirm({ status: true, message: "question uploaded" });
             setLoading(false);
         } catch (error) {
             console.error(error);
+            setConfirm({
+                status: false,
+                message: `could not upload -- ${error}`,
+            });
             setLoading(false);
         }
 
-        setNewQuiz((prev) => {
-            return {
-                ...prev,
-                question: "",
-                answer: [],
-                options: [],
-                description: "",
-            };
-        });
+        setTimeout(() => {
+            setConfirm(initialConfirm);
+            setNewQuiz((prev) => {
+                return {
+                    ...prev,
+                    question: "",
+                    answer: [],
+                    options: [],
+                    description: "",
+                };
+            });
+        }, 4000);
     };
 
     const render = (type, el) => {
@@ -198,6 +223,10 @@ const NewQuizPage = () => {
                 />
             )}
             {Object.values(questions).map((el) => render(el.type, el))}
+            {loading && <Loading />}
+            {confirm.status && (
+                <ConfirmNotification message={confirm.message} />
+            )}
             <div
                 style={{
                     position: "absolute",
@@ -207,7 +236,6 @@ const NewQuizPage = () => {
                     textAlign: "center",
                 }}
             >
-                {loading && <Loading />}
                 <Button text="upload question" onSubmit={submitHandler} />
             </div>
         </form>
