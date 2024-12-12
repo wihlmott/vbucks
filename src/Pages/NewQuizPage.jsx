@@ -10,12 +10,14 @@ import { db } from "../database/databases";
 import SearchedQuizTitles from "../Components/NewQuiz/SearchedQuizTitles";
 import { Query } from "appwrite";
 import ConfirmNotification from "../Components/ConfirmNotification";
+import { removeDuplicates } from "../utils/helperFunctions";
 
 const NewQuizPage = () => {
     const [user, _] = useContext(UserContext);
     const userID = `${user[1]}${user[2]}`;
     const [loading, setLoading] = useState(false);
 
+    //assign valid state to each prop
     const initialNewQuiz = {
         subject: "-- -- -- --",
         quiz_title: "",
@@ -25,12 +27,12 @@ const NewQuizPage = () => {
         options: [],
         description: "",
     };
-    const initialConfirm = { status: null, message: null };
-    const [confirm, setConfirm] = useState(initialConfirm);
     const [newQuiz, setNewQuiz] = usePersistedState(
         { user: userID, topic: "new", value: "quiz" },
         initialNewQuiz
     );
+    const initialConfirm = { status: null, message: null };
+    const [confirm, setConfirm] = useState(initialConfirm);
     const [questions, setQuestions] = usePersistedState(
         { user: userID, topic: "new", value: "questions" },
         newQuizQuestions
@@ -51,30 +53,18 @@ const NewQuizPage = () => {
     }, [newQuiz.type_of_question]);
 
     const returnSearch = (e) => {
-        const amountPerTitle = e.map((title) => {
-            return {
-                title: title.quiz_title,
-                amount: e.filter((el) => el.quiz_title == title.quiz_title)
-                    .length,
-            };
-        });
-        const amountsSet = amountPerTitle.filter(
-            (obj1, i, arr) =>
-                arr.findIndex((obj2) => obj2.title === obj1.title) === i
-        );
-
-        // const titleSet = [...new Set(amountPerTitle.map((el) => el.title))];
-
+        const amountPerTitle = removeDuplicates(e);
         setExistingQuizTitles({
             show: true,
-            values: amountsSet,
+            values: amountPerTitle,
         });
     };
 
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        //show how many questions are loaded with this subject and title combination
+        // const formValid = ;
+        // if (!formValid) return;
 
         const payloadCreate = {
             question: newQuiz.question,
@@ -227,19 +217,21 @@ const NewQuizPage = () => {
             {confirm.status && (
                 <ConfirmNotification message={confirm.message} />
             )}
-            <div
-                style={{
-                    position: "absolute",
-                    width: "100vw",
-                    bottom: "0",
-                    marginBottom: "80px",
-                    textAlign: "center",
-                }}
-            >
+            <div style={styles.button}>
                 <Button text="upload question" onSubmit={submitHandler} />
             </div>
         </form>
     );
+};
+
+const styles = {
+    button: {
+        position: "absolute",
+        width: "100vw",
+        bottom: "0",
+        marginBottom: "80px",
+        textAlign: "center",
+    },
 };
 
 export default NewQuizPage;

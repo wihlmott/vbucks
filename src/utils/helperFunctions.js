@@ -39,3 +39,17 @@ export const cleanString = (string) =>
 
 export const cleanValue = (string) =>
     string.replaceAll(" ", "").replaceAll(".", "").replaceAll("_", "");
+
+export const removeDuplicates = (array) =>
+    array
+        .map((title) => {
+            return {
+                title: title.quiz_title,
+                amount: array.filter((el) => el.quiz_title == title.quiz_title)
+                    .length,
+            };
+        })
+        .filter(
+            (obj1, i, arr) =>
+                arr.findIndex((obj2) => obj2.title === obj1.title) === i
+        );

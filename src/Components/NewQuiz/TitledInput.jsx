@@ -11,6 +11,7 @@ const TitledInput = ({
     long = false,
     value = false,
     find = false,
+    type = "text",
     sendValue = () => {},
     returnSearch = () => {},
 }) => {
@@ -44,7 +45,7 @@ const TitledInput = ({
         <div>
             <p style={styles.title}>{title.replaceAll("_", " ")}:</p>
             <Input
-                type="text"
+                type={type}
                 placeholder={title}
                 value={value ? value : ""}
                 sendValue={sendValue}

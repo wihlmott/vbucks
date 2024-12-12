@@ -52,6 +52,18 @@ export const rewards = [
     { value: "reward4", img: teamworkIMG, id: "teamwork" },
 ];
 
+export const newLearnerQuestions = [
+    { value: "learner name", type: "input" },
+    { value: "learner password", type: "input", password: true },
+    { value: "confirm password", type: "input", password: true },
+    {
+        value: "subjects",
+        type: "input",
+        message: "seperate values with comma(,)",
+    },
+    { value: "class", type: "input" },
+];
+
 export const newQuizQuestions = [
     {
         value: "subject",
