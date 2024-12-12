@@ -10,22 +10,23 @@ import { db } from "../database/databases";
 import SearchedQuizTitles from "../Components/NewQuiz/SearchedQuizTitles";
 import { Query } from "appwrite";
 import ConfirmNotification from "../Components/ConfirmNotification";
+import InvalidFields from "../Components/NewQuiz/InvalidFields";
 import { removeDuplicates } from "../utils/helperFunctions";
 
 const NewQuizPage = () => {
     const [user, _] = useContext(UserContext);
     const userID = `${user[1]}${user[2]}`;
     const [loading, setLoading] = useState(false);
+    const [invalidFields, setInvalidFields] = useState([]);
 
-    //assign valid state to each prop
     const initialNewQuiz = {
-        subject: "-- -- -- --",
-        quiz_title: "",
-        type_of_question: "-- -- -- --",
-        question: "",
-        answer: [],
-        options: [],
-        description: "",
+        subject: { value: "-- -- -- --", valid: false },
+        quiz_title: { value: "", valid: false },
+        type_of_question: { value: "-- -- -- --", valid: false },
+        question: { value: "", valid: false },
+        answer: { value: [], valid: false },
+        options: { value: [], valid: false },
+        description: { value: "", valid: false },
     };
     const [newQuiz, setNewQuiz] = usePersistedState(
         { user: userID, topic: "new", value: "quiz" },
@@ -44,7 +45,7 @@ const NewQuizPage = () => {
 
     useEffect(() => {
         setQuestions(() => {
-            if (newQuiz.type_of_question != "multiple choice")
+            if (newQuiz.type_of_question.value != "multiple choice")
                 return newQuizQuestions.filter(
                     (question) => question.value != "options"
                 );
@@ -63,20 +64,28 @@ const NewQuizPage = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        // const formValid = ;
-        // if (!formValid) return;
+        setInvalidFields(() =>
+            questions.filter((question) => {
+                if (newQuiz[question.value].valid == false)
+                    return question.value;
+            })
+        );
+        if (invalidFields.length > 0) return;
 
         const payloadCreate = {
-            question: newQuiz.question,
-            options: newQuiz.options == [] ? newQuiz.options.split(",") : [],
-            description: newQuiz.description,
-            answer: newQuiz.answer.split(","),
-            quiz_title: newQuiz.quiz_title,
-            subject: newQuiz.subject,
+            question: newQuiz.question.value,
+            options:
+                newQuiz.options.value == []
+                    ? []
+                    : newQuiz.options.value?.split(","),
+            description: newQuiz.description.value,
+            answer: newQuiz.answer.value?.split(","),
+            quiz_title: newQuiz.quiz_title.value,
+            subject: newQuiz.subject.value,
             type: questions
                 .filter((question) => question.value == "type_of_question")[0]
                 .options.filter(
-                    (option) => option.text == newQuiz.type_of_question
+                    (option) => option.text == newQuiz.type_of_question.value
                 )[0].element,
         };
 
@@ -85,18 +94,19 @@ const NewQuizPage = () => {
             await db.questions.create(payloadCreate);
             const response = (
                 await db.subjects.list([
-                    Query.equal("title", [newQuiz.subject]),
+                    Query.equal("title", [newQuiz.subject.value]),
                 ])
             ).documents[0];
-            console.log(response);
 
             const payloadSubject = {
                 title: response.title,
-                quiz_titles: response.quiz_titles.includes(newQuiz.quiz_title)
+                quiz_titles: response.quiz_titles.includes(
+                    newQuiz.quiz_title.value
+                )
                     ? response.quiz_titles
-                    : [...response.quiz_titles, newQuiz.quiz_title],
+                    : [...response.quiz_titles, newQuiz.quiz_title.value],
             };
-            await db.subjects.update(newQuiz.subject, payloadSubject);
+            await db.subjects.update(newQuiz.subject.value, payloadSubject);
             setConfirm({ status: true, message: "question uploaded" });
             setLoading(false);
         } catch (error) {
@@ -130,12 +140,15 @@ const NewQuizPage = () => {
                         key={el.value}
                         title={el.value}
                         message={el.message}
-                        value={newQuiz[`${el.value}`]}
+                        value={newQuiz[`${el.value}`].value}
                         sendValue={(e) => {
                             setNewQuiz((prev) => {
                                 return {
                                     ...prev,
-                                    [`${el.value}`]: e.value,
+                                    [`${el.value}`]: {
+                                        value: e.value,
+                                        valid: e.value.length > 0,
+                                    },
                                 };
                             });
                         }}
@@ -147,13 +160,16 @@ const NewQuizPage = () => {
                         key={el.value}
                         title={el.value}
                         message={el.message}
-                        value={newQuiz[`${el.value}`]}
+                        value={newQuiz[`${el.value}`].value}
                         long
                         sendValue={(e) => {
                             setNewQuiz((prev) => {
                                 return {
                                     ...prev,
-                                    [`${el.value}`]: e.value,
+                                    [`${el.value}`]: {
+                                        value: e.value,
+                                        valid: e.value.length > 0,
+                                    },
                                 };
                             });
                         }}
@@ -165,17 +181,20 @@ const NewQuizPage = () => {
                         key={el.value}
                         title={el.value}
                         message={el.message}
-                        value={newQuiz[`${el.value}`]}
+                        value={newQuiz[`${el.value}`].value}
                         find
                         returnSearch={returnSearch}
-                        sendValue={(e) => {
+                        sendValue={(e) =>
                             setNewQuiz((prev) => {
                                 return {
                                     ...prev,
-                                    [`${el.value}`]: e.value,
+                                    [`${el.value}`]: {
+                                        value: e.value,
+                                        valid: e.value.length > 0,
+                                    },
                                 };
-                            });
-                        }}
+                            })
+                        }
                     />
                 );
             case "dropdown":
@@ -187,7 +206,13 @@ const NewQuizPage = () => {
                         userID={userID}
                         sendValue={(e) =>
                             setNewQuiz((prev) => {
-                                return { ...prev, [`${el.value}`]: e };
+                                return {
+                                    ...prev,
+                                    [`${el.value}`]: {
+                                        value: e,
+                                        valid: e.length > 0,
+                                    },
+                                };
                             })
                         }
                     />
@@ -204,7 +229,10 @@ const NewQuizPage = () => {
                     titles={existingQuizTitles.values}
                     sendValue={(e) => {
                         setNewQuiz((prev) => {
-                            return { ...prev, quiz_title: e };
+                            return {
+                                ...prev,
+                                quiz_title: { value: e, valid: e.length > 0 },
+                            };
                         });
                         setExistingQuizTitles((prev) => {
                             return { ...prev, show: false };
@@ -213,9 +241,15 @@ const NewQuizPage = () => {
                 />
             )}
             {Object.values(questions).map((el) => render(el.type, el))}
+            {invalidFields.length > 0 && (
+                <InvalidFields array={invalidFields} />
+            )}
             {loading && <Loading />}
             {confirm.status && (
-                <ConfirmNotification message={confirm.message} />
+                <ConfirmNotification
+                    message={confirm.message}
+                    status={confirm.status}
+                />
             )}
             <div style={styles.button}>
                 <Button text="upload question" onSubmit={submitHandler} />

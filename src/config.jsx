@@ -32,6 +32,9 @@ export const subjects = {
     mathematics: { icon: <BiMath />, color: colors.gradients[0] },
     science: { icon: <SlChemistry />, color: colors.gradients[1] },
     english: { icon: <FcReading />, color: colors.gradients[2] },
+    EGD: { icon: <FcReading />, color: colors.gradients[2] },
+    technical_mathematics: { icon: <FcReading />, color: colors.gradients[2] },
+    technical_science: { icon: <FcReading />, color: colors.gradients[2] },
 };
 
 export const navBarIcons = [
@@ -53,9 +56,9 @@ export const rewards = [
 ];
 
 export const newLearnerQuestions = [
-    { value: "learner name", type: "input" },
-    { value: "learner password", type: "input", password: true },
-    { value: "confirm password", type: "input", password: true },
+    { value: "learner_name", type: "input" },
+    { value: "learner_password", type: "input", password: true },
+    { value: "confirm_password", type: "input", password: true },
     {
         value: "subjects",
         type: "input",

@@ -9,9 +9,10 @@ const Subjects = () => {
     const [state, setState] = useState({ subjects: [], isLoading: true });
 
     const init = async () => {
-        const response = await db.subjects.list();
+        //add query for only this learners subjects -- eventually class as well
+        const response = (await db.subjects.list()).documents;
         setState(() => {
-            return { subjects: response.documents, isLoading: false };
+            return { subjects: response, isLoading: false };
         });
     };
     useEffect(() => {
@@ -21,8 +22,11 @@ const Subjects = () => {
     const render = () => {
         return (
             <>
-                {state.subjects.map((el) => {
-                    const { title, topics } = el;
+                {state.subjects.map((subject) => {
+                    const { title, quiz_titles } = subject;
+
+                    console.log(state.subjects);
+                    console.log(subject);
 
                     return (
                         <LinkCard
@@ -31,7 +35,7 @@ const Subjects = () => {
                             state={{
                                 title: title,
                                 color: subjects[`${title}`].color,
-                                topics: topics,
+                                topics: quiz_titles,
                             }}
                             title={title}
                             height="76px"

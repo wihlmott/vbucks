@@ -156,7 +156,7 @@ const QuestionPage = () => {
                     full: false,
                 };
             });
-            setQuizScore((prev) => (prev <= 0 ? prev : prev - pointsToAdd));
+            setQuizScore((prev) => prev - (pointsToAdd + 1));
         }
         if (e == "right") {
             if (currentQuestion.value.status == null) return;
@@ -316,7 +316,7 @@ const QuestionPage = () => {
         <>
             {quiz.isLoading ? <Loading /> : render()}
             <QuestionFooter
-                leftUSE={counter.value != 0}
+                leftUSE={counter.value != 0 && !usableDesc.usable}
                 rightUSE={
                     clicked.status != null ||
                     input.status != null ||

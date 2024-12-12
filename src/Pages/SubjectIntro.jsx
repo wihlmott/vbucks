@@ -10,6 +10,9 @@ import LeaderboardButton from "../Components/Leaderboard/LeaderboardButton";
 import SortedNames from "../Components/Leaderboard/SortedNames";
 import { sortArray } from "../utils/helperFunctions";
 
+//never uses topics that come in from location
+//query db call, to only display quiz for this grade
+
 const SubjectIntro = () => {
     const { state: subject } = useLocation();
     const [state, setState] = useState({ topics: [], isLoading: true });

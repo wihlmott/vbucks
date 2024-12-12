@@ -29,6 +29,8 @@ collections.forEach((col) => {
     db[col.name] = {
         create: (payload) =>
             databases.createDocument(col.dbID, col.id, ID.unique(), payload),
+        createWithID: (id, payload) =>
+            databases.createDocument(col.dbID, col.id, id, payload),
         update: (id, payload) =>
             databases.updateDocument(col.dbID, col.id, id, payload),
         list: (queries = []) =>
