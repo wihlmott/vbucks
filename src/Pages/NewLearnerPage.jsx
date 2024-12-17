@@ -9,6 +9,10 @@ import { UserContext } from "../context/context";
 import { usePersistedState } from "../hooks/usePersistedState";
 import { db } from "../database/databases";
 
+// after validation
+// use reducer for multiple state variables
+// option for updating user, not only creating new user -- prevent user being created for same name user
+
 const NewLearnerPage = () => {
     const [user, _] = useContext(UserContext);
     const userID = `${user[1]}${user[2]}`;
@@ -31,20 +35,21 @@ const NewLearnerPage = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        setInvalidFields(() =>
-            newLearnerQuestions.filter((question) => {
-                if (formState[question.value].valid == false)
-                    return question.value;
-            })
-        );
-        if (
-            formState.learner_password.value !==
-            formState.confirm_password.value
-        )
-            setInvalidFields((prev) => {
-                return [...prev, "passwords do not match"];
-            });
-        if (invalidFields.length > 0) return;
+
+        // setInvalidFields(
+        //     newLearnerQuestions.filter((question) => {
+        //         if (formState[question.value].valid == false)
+        //             return question.value;
+        //     })
+        // );
+        // if (
+        //     formState.learner_password.value !==
+        //     formState.confirm_password.value
+        // )
+        //     setInvalidFields((prev) => {
+        //         return [...prev, "passwords do not match"];
+        //     });
+        // if (invalidFields.length > 0) return;
 
         const payload = {
             name: formState.learner_name.value.split(" ")[0],
@@ -56,9 +61,10 @@ const NewLearnerPage = () => {
         setLoading(true);
         try {
             await db.users.createWithID(
-                formState.learner_name.replaceAll(" ", ""),
+                formState.learner_name.value.replaceAll(" ", ""),
                 payload
             );
+
             setLoading(false);
             setConfirm({ status: true, message: "learner added" });
             setFormState(initialFormState);

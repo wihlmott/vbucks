@@ -5,11 +5,12 @@ const SearchedQuizTitles = ({ titles, sendValue = () => {} }) => (
             <div
                 key={title.title}
                 style={styles.button}
-                onClick={() => sendValue(title.title)}
+                onClick={() => sendValue(title)}
             >
                 <p style={{ display: "inline-block" }}>{title.title} </p>
                 <p style={{ display: "inline-block", float: "right" }}>
-                    -- {title.amount} {title.amount == 1 ? "entry" : "entries"}
+                    -- {title.questions.length}{" "}
+                    {title.questions.length == 1 ? "entry" : "entries"}
                 </p>
             </div>
         ))}

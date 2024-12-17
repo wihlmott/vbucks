@@ -19,8 +19,8 @@ const TitledInput = ({
     const handleSearch = async () => {
         setLoading(true);
         try {
-            const response = await db.questions.list([Query.select([title])]);
-            returnSearch(response.documents);
+            const response = (await db.quiz_titles.list()).documents;
+            returnSearch(response);
             setLoading(false);
         } catch (error) {
             console.error(error);

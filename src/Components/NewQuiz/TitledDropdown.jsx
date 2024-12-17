@@ -7,36 +7,20 @@ const TitledDropdown = ({
     value = false,
     sendValue = () => {},
     userID,
+    selectedValue = "-- -- -- --",
 }) => {
-    const [selectedState, setSelectedState] = usePersistedState(
+    const [dropOpen, setDropOpen] = usePersistedState(
         { user: userID, topic: "drop", value: title },
-        {
-            value: "-- -- -- --",
-            open: false,
-        }
+        false
     );
-    const handleOpen = () =>
-        setSelectedState((prev) => {
-            return { ...prev, open: !prev.open };
-        });
-    const handleClick = (e) => {
-        sendValue(e);
-        setSelectedState((prev) => {
-            return { ...prev, value: e };
-        });
-    };
-
-    const resetDrop = () =>
-        setSelectedState({
-            value: "-- -- -- --",
-            open: false,
-        });
+    const handleOpen = () => setDropOpen(!dropOpen);
+    const handleClick = (e) => sendValue(e);
 
     return (
         <>
             <p style={styles.title}>{title.replaceAll("_", " ")}:</p>
             <div onClick={handleOpen}>
-                {selectedState.open ? (
+                {dropOpen ? (
                     value.map((value) => (
                         <Dropdown
                             key={value.text}
@@ -47,7 +31,7 @@ const TitledDropdown = ({
                 ) : (
                     <Dropdown
                         icon={<MdKeyboardArrowDown />}
-                        value={selectedState.value}
+                        value={selectedValue}
                     />
                 )}
             </div>

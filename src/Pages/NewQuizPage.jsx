@@ -11,7 +11,6 @@ import SearchedQuizTitles from "../Components/NewQuiz/SearchedQuizTitles";
 import { Query } from "appwrite";
 import ConfirmNotification from "../Components/ConfirmNotification";
 import InvalidFields from "../Components/NewQuiz/InvalidFields";
-import { removeDuplicates } from "../utils/helperFunctions";
 
 const NewQuizPage = () => {
     const [user, _] = useContext(UserContext);
@@ -21,11 +20,12 @@ const NewQuizPage = () => {
 
     const initialNewQuiz = {
         subject: { value: "-- -- -- --", valid: false },
-        quiz_title: { value: "", valid: false },
+        quizTitle: { value: "", valid: false },
+        grades_to_view: { value: "", valid: false },
         type_of_question: { value: "-- -- -- --", valid: false },
         question: { value: "", valid: false },
-        answer: { value: [], valid: false },
-        options: { value: [], valid: false },
+        answer: { value: "", valid: false },
+        options: { value: "", valid: false },
         description: { value: "", valid: false },
     };
     const [newQuiz, setNewQuiz] = usePersistedState(
@@ -53,60 +53,71 @@ const NewQuizPage = () => {
         });
     }, [newQuiz.type_of_question]);
 
-    const returnSearch = (e) => {
-        const amountPerTitle = removeDuplicates(e);
+    const returnSearch = (e) =>
         setExistingQuizTitles({
             show: true,
-            values: amountPerTitle,
+            values: e,
         });
-    };
 
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        setInvalidFields(() =>
-            questions.filter((question) => {
-                if (newQuiz[question.value].valid == false)
-                    return question.value;
-            })
-        );
-        if (invalidFields.length > 0) return;
+        // setInvalidFields(() =>
+        //     questions.filter((question) => {
+        //         if (newQuiz[question.value].valid == false)
+        //             return question.value;
+        //     })
+        // );
+        // if (invalidFields.length > 0) return;
 
         const payloadCreate = {
             question: newQuiz.question.value,
             options:
-                newQuiz.options.value == []
+                newQuiz.options.value == ""
                     ? []
-                    : newQuiz.options.value?.split(","),
+                    : newQuiz.options.value.split(","),
             description: newQuiz.description.value,
-            answer: newQuiz.answer.value?.split(","),
-            quiz_title: newQuiz.quiz_title.value,
+            answer: newQuiz.answer.value.split(","),
+            quizTitle: newQuiz.quizTitle.value,
             subject: newQuiz.subject.value,
             type: questions
                 .filter((question) => question.value == "type_of_question")[0]
                 .options.filter(
                     (option) => option.text == newQuiz.type_of_question.value
                 )[0].element,
+            grades_to_view: newQuiz.grades_to_view.value.split(","),
         };
 
+        //where am I going to write to. with the tables connected, could write only once.
         setLoading(true);
         try {
-            await db.questions.create(payloadCreate);
-            const response = (
-                await db.subjects.list([
-                    Query.equal("title", [newQuiz.subject.value]),
-                ])
-            ).documents[0];
+            console.log(payloadCreate);
 
-            const payloadSubject = {
-                title: response.title,
-                quiz_titles: response.quiz_titles.includes(
-                    newQuiz.quiz_title.value
-                )
-                    ? response.quiz_titles
-                    : [...response.quiz_titles, newQuiz.quiz_title.value],
-            };
-            await db.subjects.update(newQuiz.subject.value, payloadSubject);
+            // await db.questions.create(payloadCreate);
+            // const response = (
+            //     await db.subjects.list([
+            //         Query.equal("title", [newQuiz.subject.value]),
+            //     ])
+            // ).documents[0];
+
+            // const payloadSubject = {
+            //     title: response.title,
+            //     quizTitles: response.quizTitles.includes(
+            //         newQuiz.quizTitle.value
+            //     )
+            //         ? response.quizTitles
+            //         : [...response.quizTitles, newQuiz.quizTitle.value],
+            // };
+            // await db.subjects.update(newQuiz.subject.value, payloadSubject);
+
+            // console.log(
+            //     (
+            //         await db.quiz_titles.list([
+            //             Query.equal("title", [newQuiz.quiz_title.value]),
+            //         ])
+            //     ).documents[0]
+            // );
+
             setConfirm({ status: true, message: "question uploaded" });
             setLoading(false);
         } catch (error) {
@@ -123,10 +134,11 @@ const NewQuizPage = () => {
             setNewQuiz((prev) => {
                 return {
                     ...prev,
-                    question: "",
-                    answer: [],
-                    options: [],
-                    description: "",
+                    type_of_question: { value: "-- -- -- --", valid: false },
+                    question: { value: "", valid: false },
+                    answer: { value: "", valid: false },
+                    options: { value: "", valid: false },
+                    description: { value: "", valid: false },
                 };
             });
         }, 4000);
@@ -203,6 +215,7 @@ const NewQuizPage = () => {
                         key={el.value}
                         title={el.value}
                         value={el.options}
+                        selectedValue={newQuiz[el.value].value}
                         userID={userID}
                         sendValue={(e) =>
                             setNewQuiz((prev) => {
@@ -231,7 +244,20 @@ const NewQuizPage = () => {
                         setNewQuiz((prev) => {
                             return {
                                 ...prev,
-                                quiz_title: { value: e, valid: e.length > 0 },
+                                subject: {
+                                    value: e.subject.title,
+                                    valid: e.subject.title.length > 0,
+                                },
+                                quizTitle: {
+                                    value: e.title,
+                                    valid: e.title.length > 0,
+                                },
+                                grades_to_view: {
+                                    value: e.grades_to_view.sort().join(),
+                                    valid:
+                                        e.grades_to_view.sort().join().length >
+                                        0,
+                                },
                             };
                         });
                         setExistingQuizTitles((prev) => {

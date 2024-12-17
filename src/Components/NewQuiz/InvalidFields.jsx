@@ -1,8 +1,8 @@
 const InvalidFields = ({ array }) => (
     <>
         <p style={styles.invalidFieldsHeading}>invalid fields:</p>
-        {array.map((field) => (
-            <p key={field} style={styles.invalidFields}>
+        {array.map((field, i) => (
+            <p key={i} style={styles.invalidFields}>
                 {field}
             </p>
         ))}
