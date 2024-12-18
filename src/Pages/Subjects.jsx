@@ -10,7 +10,6 @@ import { Query } from "appwrite";
 const Subjects = () => {
     const [user, _] = useContext(UserContext);
     const [a, b, c, userSubjects] = user;
-    const userGrade = c.split(/[a-z]/)[0];
 
     const [state, setState] = useState({ subjects: [], isLoading: true });
 
@@ -29,25 +28,20 @@ const Subjects = () => {
 
     const render = () => (
         <>
-            {state.subjects.map((subject) => {
-                const { title, quiz_titles } = subject;
-
-                return (
-                    <LinkCard
-                        key={title}
-                        to="../subjectIntro"
-                        state={{
-                            title: title,
-                            color: subjects[`${title}`].color,
-                            topics: quiz_titles,
-                        }}
-                        title={title}
-                        height="76px"
-                        backgroundColor={subjects[`${title}`].color}
-                        icon={subjects[`${title}`].icon}
-                    />
-                );
-            })}
+            {state.subjects.map((subject) => (
+                <LinkCard
+                    key={subject.title}
+                    to="../subjectIntro"
+                    state={{
+                        title: subject.title,
+                        color: subjects[`${subject.title}`].color,
+                    }}
+                    title={subject.title}
+                    height="76px"
+                    backgroundColor={subjects[`${subject.title}`].color}
+                    icon={subjects[`${subject.title}`].icon}
+                />
+            ))}
         </>
     );
 

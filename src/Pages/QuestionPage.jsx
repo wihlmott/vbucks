@@ -34,11 +34,11 @@ const QuestionPage = () => {
     const userID = (name + surname).toLowerCase();
 
     const [counter, setCounter] = usePersistedState(
-        { user: userID, topic: topic, value: "counter" },
+        { user: userID, topic: topic.title, value: "counter" },
         { value: 0, max: 0, full: false }
     );
     const [quizScore, setQuizScore] = usePersistedState(
-        { user: userID, topic: topic, value: "quizScore" },
+        { user: userID, topic: topic.title, value: "quizScore" },
         0
     );
 
@@ -48,7 +48,7 @@ const QuestionPage = () => {
         locked: { status: false, correct: null },
     };
     const [clicked, setClicked] = usePersistedState(
-        { user: userID, topic: topic, value: "clicked" },
+        { user: userID, topic: topic.title, value: "clicked" },
         clickedInit
     );
     const inputInit = {
@@ -59,7 +59,7 @@ const QuestionPage = () => {
         locked: { status: false, correct: null },
     };
     const [input, setInput] = usePersistedState(
-        { user: userID, topic: topic, value: "input" },
+        { user: userID, topic: topic.title, value: "input" },
         inputInit
     );
     const doubleInputInit = {
@@ -73,7 +73,7 @@ const QuestionPage = () => {
         locked: { status: false, correct: null },
     };
     const [doubleInput, setDoubleInput] = usePersistedState(
-        { user: userID, topic: topic, value: "doubleInput" },
+        { user: userID, topic: topic.title, value: "doubleInput" },
         doubleInputInit
     );
     const inputStringInit = {
@@ -82,7 +82,7 @@ const QuestionPage = () => {
         locked: { status: false, correct: null },
     };
     const [inputString, setInputString] = usePersistedState(
-        { user: userID, topic: topic, value: "inputString" },
+        { user: userID, topic: topic.title, value: "inputString" },
         inputStringInit
     );
     const usableDescInit = {
@@ -90,7 +90,7 @@ const QuestionPage = () => {
         open: false,
     };
     const [usableDesc, setUsableDesc] = usePersistedState(
-        { user: userID, topic: topic, value: "desc" },
+        { user: userID, topic: topic.title, value: "desc" },
         usableDescInit
     );
 
@@ -108,7 +108,7 @@ const QuestionPage = () => {
     const init = async () => {
         try {
             const response = await db.questions.list([
-                Query.equal("quiz_title", [`${topic}`]),
+                Query.equal("quizTitle", [`${topic.title}`]),
             ]);
             setQuiz(() => {
                 return {
@@ -138,7 +138,7 @@ const QuestionPage = () => {
         });
 
     const previouslyDoneQuiz = quiz_completed.find(
-        (el) => el.split("-")[1] == topic
+        (el) => el.split("-")[1] == topic.title
     );
     const pointsToAdd = previouslyDoneQuiz ? 2 : 3;
 
@@ -148,6 +148,7 @@ const QuestionPage = () => {
 
     const handleNext = (e) => {
         if (e == "left") {
+            if (usableDesc.usable || counter.value == 0) return;
             reset();
             setCounter((prev) => {
                 return {
@@ -160,7 +161,6 @@ const QuestionPage = () => {
         }
         if (e == "right") {
             if (currentQuestion.value.status == null) return;
-
             setUsableDesc({
                 usable: true,
                 open: false,
@@ -193,7 +193,9 @@ const QuestionPage = () => {
             payload = {
                 quiz_completed: [
                     ...quiz_completed.filter((el) => el != previouslyDoneQuiz),
-                    `${subject}-${topic}-${quizScore}-${getFormattedDate()}`,
+                    `${subject}-${
+                        topic.title
+                    }-${quizScore}-${getFormattedDate()}`,
                 ],
             };
         }
@@ -201,7 +203,9 @@ const QuestionPage = () => {
             payloadAlt = {
                 alt_quiz_attempts: [
                     ...alt_quiz_attempts,
-                    `${subject}-${topic}-${quizScore}-${getFormattedDate()}`,
+                    `${subject}-${
+                        topic.title
+                    }-${quizScore}-${getFormattedDate()}`,
                 ],
             };
 

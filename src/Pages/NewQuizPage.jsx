@@ -61,14 +61,7 @@ const NewQuizPage = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-
-        // setInvalidFields(() =>
-        //     questions.filter((question) => {
-        //         if (newQuiz[question.value].valid == false)
-        //             return question.value;
-        //     })
-        // );
-        // if (invalidFields.length > 0) return;
+        setLoading(true);
 
         const payloadCreate = {
             question: newQuiz.question.value,
@@ -85,48 +78,56 @@ const NewQuizPage = () => {
                 .options.filter(
                     (option) => option.text == newQuiz.type_of_question.value
                 )[0].element,
-            grades_to_view: newQuiz.grades_to_view.value.split(","),
         };
 
-        //where am I going to write to. with the tables connected, could write only once.
-        setLoading(true);
+        // setInvalidFields(() =>
+        //     questions.filter((question) => {
+        //         if (newQuiz[question.value].valid == false)
+        //             return question.value;
+        //     })
+        // );
+        // if (invalidFields.length > 0) return;
         try {
-            console.log(payloadCreate);
-
-            // await db.questions.create(payloadCreate);
-            // const response = (
-            //     await db.subjects.list([
-            //         Query.equal("title", [newQuiz.subject.value]),
-            //     ])
-            // ).documents[0];
-
-            // const payloadSubject = {
-            //     title: response.title,
-            //     quizTitles: response.quizTitles.includes(
-            //         newQuiz.quizTitle.value
-            //     )
-            //         ? response.quizTitles
-            //         : [...response.quizTitles, newQuiz.quizTitle.value],
-            // };
-            // await db.subjects.update(newQuiz.subject.value, payloadSubject);
-
-            // console.log(
-            //     (
-            //         await db.quiz_titles.list([
-            //             Query.equal("title", [newQuiz.quiz_title.value]),
-            //         ])
-            //     ).documents[0]
-            // );
+            await db.quiz_titles.get(newQuiz.quizTitle.value); // does the topic exist -- maybe chance to list with query, then will return null instead of throw error
+            await db.questions.create(payloadCreate); //add question
 
             setConfirm({ status: true, message: "question uploaded" });
             setLoading(false);
         } catch (error) {
-            console.error(error);
-            setConfirm({
-                status: false,
-                message: `could not upload -- ${error}`,
-            });
-            setLoading(false);
+            if (error.code == 404) {
+                console.log(error.message);
+
+                try {
+                    const payload = {
+                        title: newQuiz.quizTitle.value,
+                        grades_to_view: newQuiz.grades_to_view.value.split(","),
+                        subject: newQuiz.subject.value,
+                    };
+
+                    await db.quiz_titles.createWithID(
+                        newQuiz.quizTitle.value,
+                        payload
+                    ); //create topic
+                    await db.questions.create(payloadCreate); //add question
+
+                    setConfirm({ status: true, message: "question uploaded" });
+                    setLoading(false);
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                    setConfirm({
+                        status: false,
+                        message: `could not add question -- ${error.message}`,
+                    });
+                }
+            } else {
+                console.error(error);
+                setLoading(false);
+                setConfirm({
+                    status: false,
+                    message: `could not create topic -- ${error.message}`,
+                });
+            }
         }
 
         setTimeout(() => {
@@ -271,7 +272,7 @@ const NewQuizPage = () => {
                 <InvalidFields array={invalidFields} />
             )}
             {loading && <Loading />}
-            {confirm.status && (
+            {confirm.status != null && (
                 <ConfirmNotification
                     message={confirm.message}
                     status={confirm.status}

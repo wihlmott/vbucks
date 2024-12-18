@@ -4,6 +4,8 @@ import { cleanValue, shuffle } from "../utils/helperFunctions";
 import { AnswerContext } from "../context/answerContext";
 
 const Options = ({ array, answer }) => {
+    const answerClean = answer.map((el) => cleanValue(el));
+
     const [clicked, setClicked] = useContext(AnswerContext);
     const options = useMemo(() => shuffle(array), [array]);
 
@@ -22,7 +24,7 @@ const Options = ({ array, answer }) => {
                                         return {
                                             ...prev,
                                             clicked: e.message,
-                                            status: answer.includes(
+                                            status: answerClean.includes(
                                                 cleanValue(e.message)
                                             ),
                                         };

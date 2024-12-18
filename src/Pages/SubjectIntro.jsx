@@ -10,9 +10,6 @@ import LeaderboardButton from "../Components/Leaderboard/LeaderboardButton";
 import SortedNames from "../Components/Leaderboard/SortedNames";
 import { sortArray } from "../utils/helperFunctions";
 
-//never uses topics that come in from location
-//query db call, to only display quiz for this grade
-
 const SubjectIntro = () => {
     const { state: subject } = useLocation();
     const [state, setState] = useState({ topics: [], isLoading: true });
@@ -22,12 +19,16 @@ const SubjectIntro = () => {
         names: [],
     });
     const [user, _] = useContext(UserContext);
-    const [name, surname, a, b, quiz_completed, d] = user;
+    const [name, surname, c, b, quiz_completed, d] = user;
+    const grade = c.split(/[A-z]/)[0];
     const userID = (name + surname).toLowerCase();
 
     const init = async () => {
         const response = await db.subjects.get(subject.title);
-        setState({ topics: response.quiz_titles, isLoading: false });
+        const topics = response.quizTitles.filter((topic) =>
+            topic.grades_to_view.includes(parseInt(grade))
+        );
+        setState({ topics: topics, isLoading: false });
     };
     useEffect(() => {
         init();
@@ -64,11 +65,33 @@ const SubjectIntro = () => {
 
     const render = () =>
         state.topics.map((topic) => {
-            const progress = getFromLocalStorage(`${userID}-${topic}-counter`);
-            const full = quiz_completed.find((el) => el.split("-")[1] == topic);
+            const progress = getFromLocalStorage(
+                `${userID}-${topic.title}-counter`
+            );
+            const full = quiz_completed.find(
+                (el) => el.split("-")[1] == topic.title
+            );
+
+            const styles = {
+                leaderBoard: {
+                    overflow: "hidden",
+                    backgroundColor: "rgba(0,0,0,.3)",
+                    borderBottomLeftRadius: "8px",
+                    borderBottomRightRadius: "8px",
+                    boxShadow: "1px 2px 6px rgba(0,0,0,.35)",
+                    margin: "-11px 15px 0px 15px",
+                    maxHeight:
+                        leaderboardState.open &&
+                        leaderboardState.topic == topic.title
+                            ? "200px"
+                            : "0",
+                    transitionProperty: "max-height",
+                    transitionDuration: ".3s",
+                },
+            };
 
             return (
-                <Fragment key={topic}>
+                <Fragment key={topic.title}>
                     <LinkCard
                         to="/question"
                         state={{
@@ -76,7 +99,7 @@ const SubjectIntro = () => {
                             color: subject.color,
                             subject: subject.title,
                         }}
-                        title={topic}
+                        title={topic.title}
                         square
                         shadowColor={subject.color.split(" ")[1]}
                         progressBar={{
@@ -90,30 +113,14 @@ const SubjectIntro = () => {
                             setLeaderboardState((prev) => {
                                 return {
                                     ...prev,
-                                    topic: topic,
+                                    topic: topic.title,
                                     open: !prev.open,
                                 };
                             });
                         }}
                     />
                     {
-                        <div
-                            style={{
-                                overflow: "hidden",
-                                backgroundColor: "rgba(0,0,0,.3)",
-                                borderBottomLeftRadius: "8px",
-                                borderBottomRightRadius: "8px",
-                                boxShadow: "1px 2px 6px rgba(0,0,0,.35)",
-                                margin: "-11px 15px 0px 15px",
-                                maxHeight:
-                                    leaderboardState.open &&
-                                    leaderboardState.topic == topic
-                                        ? "200px"
-                                        : "0",
-                                transitionProperty: "max-height",
-                                transitionDuration: ".3s",
-                            }}
-                        >
+                        <div style={styles.leaderBoard}>
                             <SortedNames array={leaderboardState.names} mini />
                         </div>
                     }
