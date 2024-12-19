@@ -26,7 +26,7 @@ export const returnPayloadCreateQuestion = (newQuiz, questions) => {
     };
 };
 
-export const returnInvalidFields = (newQuiz) => {
+export const returnInvalidFieldsQuiz = (newQuiz) => {
     let arr = [];
     const allBarOptions = Object.entries(newQuiz).filter((input) =>
         newQuiz.type_of_question.value != "multiple choice"
@@ -37,4 +37,30 @@ export const returnInvalidFields = (newQuiz) => {
         if (input[1].valid == false) arr.push(input[0]);
     });
     return arr;
+};
+
+export const initialFormState = {
+    learner_name: { value: null, valid: false },
+    learner_password: { value: null, valid: false },
+    confirm_password: { value: null, valid: false },
+    subjects: { value: [], valid: false },
+    class: { value: null, valid: false },
+};
+
+export const returnPayloadNewLearner = (formState) => {
+    return {
+        name: formState.learner_name.value.split(" ")[0],
+        surname: formState.learner_name.value.split(" ")[1],
+        subjects: formState.subjects.value.split(","),
+        password: formState.learner_password.value,
+        class: formState.class.value,
+    };
+};
+
+export const returnInvalidFieldsLearner = (formState) => {
+    let arr = [];
+    Object.entries(formState).forEach((input) => {
+        if (input[1].valid == false) arr.push(input[0]);
+    });
+    return arr.length == 0 ? null : arr;
 };
