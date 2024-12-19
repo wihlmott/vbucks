@@ -1,7 +1,6 @@
 import { IoSearch } from "react-icons/io5";
 import Input from "../Inputs/Input";
 import { db } from "../../database/databases";
-import { Query } from "appwrite";
 import { useState } from "react";
 import classes from "../Loading.module.css";
 
@@ -35,8 +34,7 @@ const TitledInput = ({
             margin: "16px 0 -4px 0",
         },
         searchIcon: {
-            position: "absolute",
-            marginTop: "18px",
+            position: "relative",
             color: `rgba(${loading ? "255" : "0"},0,0,1)`,
         },
     };

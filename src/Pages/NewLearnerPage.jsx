@@ -10,7 +10,6 @@ import { usePersistedState } from "../hooks/usePersistedState";
 import { db } from "../database/databases";
 
 // after validation
-// use reducer for multiple state variables
 // option for updating user, not only creating new user -- prevent user being created for same name user
 
 const NewLearnerPage = () => {
