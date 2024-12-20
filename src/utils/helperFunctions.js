@@ -22,7 +22,9 @@ export const sortArray = (array) =>
                 name: user.name,
                 surname: user.surname,
                 totalPoints: user.quiz_completed.reduce(
-                    (acc, curr) => acc + parseInt(curr.split("-")[2]),
+                    (acc, curr) =>
+                        acc +
+                        parseInt(curr.split("-")[curr.split("-").length - 2]),
                     0
                 ),
             };

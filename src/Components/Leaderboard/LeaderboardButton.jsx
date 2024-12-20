@@ -1,4 +1,4 @@
-import leaderboardIMG from "../../assets/Images/Leaderboard.jpg";
+import leaderboardIMG from "../../assets/Images/leaderboard.svg";
 
 const LeaderboardButton = ({ handleClick }) => {
     return (
