@@ -15,6 +15,7 @@ import {
     returnPayloadCreateQuestion,
 } from "../Components/NewQuiz/newQuizHelpers";
 import { render } from "../Components/NewQuiz/newQuizInputRender";
+import { cleanDocID } from "../utils/helperFunctions";
 
 const NewQuizPage = () => {
     const [user, _] = useContext(UserContext);
@@ -67,7 +68,7 @@ const NewQuizPage = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        if (invalidFields.values.length > 0) {
+        if (invalidFields.values != null) {
             setInvalidFields((prev) => ({ ...prev, open: true }));
             messageRef.current?.scrollIntoView({
                 behavior: "smooth",
@@ -83,7 +84,7 @@ const NewQuizPage = () => {
             questions
         );
         try {
-            await db.quiz_titles.get(newQuiz.quizTitle.value); // does the topic exist -- maybe chance to list with query, then will return null instead of throw error
+            await db.quiz_titles.get(cleanDocID(newQuiz.quizTitle.value)); // does the topic exist -- maybe chance to list with query, then will return null instead of throw error
             await db.questions.create(payloadCreateQuestion); //add question
 
             setConfirm({ status: true, message: "question uploaded" });
@@ -92,13 +93,12 @@ const NewQuizPage = () => {
             if (error.code == 404) {
                 try {
                     const payload = {
-                        title: newQuiz.quizTitle.value,
+                        title: cleanDocID(newQuiz.quizTitle.value),
                         grades_to_view: newQuiz.grades_to_view.value.split(","),
                         subject: newQuiz.subject.value,
                     };
-
                     await db.quiz_titles.createWithID(
-                        newQuiz.quizTitle.value,
+                        cleanDocID(newQuiz.quizTitle.value),
                         payload
                     ); //create topic
                     await db.questions.create(payloadCreateQuestion); //add question

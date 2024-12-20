@@ -183,7 +183,10 @@ const QuestionPage = () => {
 
     const addScoreToDB = async () => {
         let payload, payloadAlt;
-        const sendToAlt = previouslyDoneQuiz?.split("-")[2] >= quizScore;
+        const sendToAlt =
+            previouslyDoneQuiz?.split("-")[
+                previouslyDoneQuiz?.split("-").length - 2
+            ] >= quizScore;
         if (!sendToAlt) {
             payloadAlt = {
                 alt_quiz_attempts: previouslyDoneQuiz

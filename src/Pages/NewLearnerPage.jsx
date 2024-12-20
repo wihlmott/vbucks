@@ -50,7 +50,8 @@ const NewLearnerPage = () => {
                 ...prev,
                 values: [...prev.values, "learner_password"],
             }));
-        if (invalidFields.values.length > 0) {
+
+        if (invalidFields.values != null) {
             setInvalidFields((prev) => ({ ...prev, open: true }));
             confirmRef.current?.scrollIntoView({
                 behavior: "smooth",

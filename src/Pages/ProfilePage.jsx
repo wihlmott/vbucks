@@ -23,10 +23,14 @@ const ProfilePage = () => {
     const subjectArray = subjects?.map((subject) => {
         const totalScore = quiz_completed
             .filter((el) => el.split("-")[0] == subject)
-            .reduce((acc, curr) => acc + parseInt(curr.split("-")[2]), 0);
+            .reduce(
+                (acc, curr) =>
+                    acc + parseInt(curr.split("-")[curr.split("-").length - 2]),
+                0
+            );
 
         const amountOfRewardsCompleted = rewards_used.filter(
-            (el) => el.split("-")[0] == subject
+            (el) => el.split("-")[el.split("-").length - 2] == subject
         ).length;
 
         return {

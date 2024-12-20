@@ -17,7 +17,6 @@ const Subjects = () => {
         const response = (
             await db.subjects.list([Query.equal("title", userSubjects)])
         ).documents;
-
         setState(() => {
             return { subjects: response, isLoading: false };
         });

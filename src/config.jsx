@@ -35,7 +35,7 @@ export const subjects = {
     mathematics: { icon: <BiMath />, color: colors.gradients[0] },
     science: { icon: <SlChemistry />, color: colors.gradients[1] },
     english: { icon: <FcReading />, color: colors.gradients[2] },
-    EGD: { icon: <GiPencilRuler />, color: colors.gradients[3] },
+    egd: { icon: <GiPencilRuler />, color: colors.gradients[3] },
     technical_mathematics: {
         icon: <TbMathIntegralX />,
         color: colors.gradients[4],

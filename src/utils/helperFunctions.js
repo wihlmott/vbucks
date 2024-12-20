@@ -30,15 +30,30 @@ export const sortArray = (array) =>
         .sort((a, b) => b.totalPoints - a.totalPoints);
 //array must have object in the form name,surname,quiz_completed
 
+export const cleanDocID = (string) =>
+    string.trim().replaceAll("-", "_").replaceAll(" ", "_");
+
+export const cleanTitle = (string) =>
+    string
+        .replaceAll(" ", "")
+        .replaceAll(".", "")
+        .replaceAll("-", "")
+        .toLowerCase();
+
 export const cleanString = (string) =>
     string
         .replaceAll(" ", "")
         .replaceAll(".", "")
         .replaceAll("-", "")
-        .replaceAll("_", "");
+        .replaceAll("_", "")
+        .toLowerCase();
 
 export const cleanValue = (string) =>
-    string.replaceAll(" ", "").replaceAll(".", "").replaceAll("_", "");
+    string
+        .replaceAll(" ", "")
+        .replaceAll(".", "")
+        .replaceAll("_", "")
+        .toLowerCase();
 
 export const removeDuplicates = (array) =>
     array

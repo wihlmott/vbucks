@@ -1,3 +1,5 @@
+import { cleanDocID } from "../../utils/helperFunctions";
+
 export const initialNewQuiz = {
     subject: { value: "-- -- -- --", valid: false },
     quizTitle: { value: "", valid: false },
@@ -16,7 +18,7 @@ export const returnPayloadCreateQuestion = (newQuiz, questions) => {
             newQuiz.options.value == "" ? [] : newQuiz.options.value.split(","),
         description: newQuiz.description.value,
         answer: newQuiz.answer.value.split(","),
-        quizTitle: newQuiz.quizTitle.value,
+        quizTitle: cleanDocID(newQuiz.quizTitle.value),
         subject: newQuiz.subject.value,
         type: questions
             .filter((question) => question.value == "type_of_question")[0]
@@ -36,7 +38,7 @@ export const returnInvalidFieldsQuiz = (newQuiz) => {
     allBarOptions.forEach((input) => {
         if (input[1].valid == false) arr.push(input[0]);
     });
-    return arr;
+    return arr.length == 0 ? null : arr;
 };
 
 export const initialFormState = {

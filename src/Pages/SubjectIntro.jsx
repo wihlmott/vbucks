@@ -26,7 +26,7 @@ const SubjectIntro = () => {
     const init = async () => {
         const response = await db.subjects.get(subject.title);
         const topics = response.quizTitles.filter((topic) =>
-            topic.grades_to_view.includes(parseInt(grade))
+            topic.grades_to_view.includes(grade)
         );
         setState({ topics: topics, isLoading: false });
     };

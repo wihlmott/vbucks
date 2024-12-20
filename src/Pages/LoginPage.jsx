@@ -3,6 +3,7 @@ import Button from "../Components/Button";
 import Input from "../Components/Inputs/Input";
 import Loading from "../Components/Loading";
 import { colors } from "../config";
+import { cleanTitle } from "../utils/helperFunctions";
 import { UserContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
 import { db } from "../database/databases";
@@ -68,7 +69,9 @@ const LoginPage = () => {
                           user.documents[0].name,
                           user.documents[0].surname,
                           user.documents[0].class,
-                          user.documents[0].subjects,
+                          user.documents[0].subjects.map((title) =>
+                              cleanTitle(title)
+                          ),
                           user.documents[0].quiz_completed,
                           user.documents[0].rewards_used,
                           user.documents[0].alt_quiz_attempts,
