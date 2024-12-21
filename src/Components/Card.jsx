@@ -3,6 +3,8 @@ import ProgressBar from "./ProgressBar.jsx";
 
 const Card = ({
     height = "auto",
+    width = false,
+    radio = false,
     backgroundColor = false,
     centerText = false,
     onClick = () => {},
@@ -21,12 +23,12 @@ const Card = ({
             boxShadow: `1px 1px 5px ${
                 backgroundColor ? backgroundColor.split(" ")[1] : shadowColor
             }`,
-            height: progressBar ? "90px" : height,
+            height: progressBar ? "76px" : height,
             borderRadius: `${square ? "0" : "15px"}`,
             padding: "8px",
             cursor: "pointer",
-            margin: "13px 10px",
-            width: "calc(100vw - 20px)",
+            margin: "10px auto",
+            width: width ? width : "calc(100vw - 28px)",
             background: backgroundColor ? backgroundColor : "white",
         },
         title: {
@@ -36,21 +38,22 @@ const Card = ({
             color: `${!backgroundColor ? "black" : "white"}`,
             display: "inline-block",
             marginBottom: "0",
-            fontSize: message ? "0.9rem" : "1.1rem",
+            fontSize: message ? "0.9rem" : "1rem",
         },
         message: {
             color: `${!backgroundColor ? "black" : "white"}`,
             textShadow: colors.textShadowHeading,
-            paddingLeft: "10px",
-            fontSize: "0.9rem",
+            padding: "0 0 0 10px",
+            fontSize: "1rem",
             textAlign: centerText ? "center" : "false",
+            marginTop: radio ? "6px" : "inherit",
         },
         icon: {
             boxSizing: "border-box",
             float: "left",
             color: "white",
-            fontSize: "3rem",
-            marginTop: "5px",
+            fontSize: "2.6rem",
+            marginTop: "6px",
             height: "100%",
             width: "20%",
             rotate: "-5deg",
@@ -58,7 +61,7 @@ const Card = ({
             filter: "drop-shadow(3px 0px 15px rgba(0,0,0,0.55))",
         },
         cardInner: {
-            paddingTop: "5px",
+            paddingTop: "4px",
             float: "right",
             width: "80%",
         },
@@ -69,16 +72,16 @@ const Card = ({
             <>
                 {title && (
                     <>
-                        <h3
+                        <h4
                             style={{
                                 ...styles.title,
-                                fontSize: "2rem",
+                                fontSize: "1.8rem",
                                 margin: "0 -5px 0 5px",
                             }}
                         >
                             {title[0]}
-                        </h3>
-                        <h3 style={styles.title}>{title.slice(1)}</h3>
+                        </h4>
+                        <h4 style={styles.title}>{title.slice(1)}</h4>
                     </>
                 )}
                 <div style={{ width: "100%" }}>

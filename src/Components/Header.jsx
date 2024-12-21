@@ -30,7 +30,7 @@ const Header = ({
             boxSizing: "border-box",
             padding: "12px",
             borderRadius: "25px",
-            height: heightFixed ? "200px" : "auto",
+            height: heightFixed ? "160px" : "auto",
             width: `calc(100vw - ${marginValue * 2})`,
             boxShadow: `0px 3px 5px ${shadowColor}`,
             background: color,
@@ -40,7 +40,7 @@ const Header = ({
         headingText: {
             color: color == "white" ? "black" : "white",
             textShadow: colors.textShadowHeading,
-            fontSize: "1.75rem",
+            fontSize: "1.65rem",
             margin: "0",
         },
         text: {
@@ -50,10 +50,10 @@ const Header = ({
             textAlign: centerText ? "center" : "",
         },
         arrow: {
-            fontSize: "3rem",
+            fontSize: "2.5rem",
             position: "absolute",
-            right: "10px",
-            top: "10px",
+            right: "12px",
+            top: "12px",
             cursor: "pointer",
             color: color == "white" ? "black" : "white",
         },

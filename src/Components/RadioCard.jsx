@@ -4,6 +4,7 @@ import Card from "./Card";
 const RadioCard = ({
     height = "auto",
     backgroundColor = false,
+    width = "auto",
     centerText = false,
     onClick = () => {},
     title = false,
@@ -17,7 +18,9 @@ const RadioCard = ({
     return (
         <>
             <Card
+                radio={true}
                 height={height}
+                width={width}
                 backgroundColor={backgroundColor}
                 centerText={centerText}
                 onClick={onClick}
@@ -32,8 +35,8 @@ const RadioCard = ({
             <span
                 style={{
                     position: "absolute",
-                    right: "24px",
-                    marginTop: "-55px",
+                    right: "50px",
+                    marginTop: "-46px",
                 }}
             >
                 <input type="radio" checked={clicked} onChange={() => {}} />

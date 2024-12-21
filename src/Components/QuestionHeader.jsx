@@ -20,13 +20,14 @@ const QuestionHeader = ({
             color: "white",
             margin: "auto",
             textShadow: colors.textShadowHeading,
+            fontSize: ".8rem",
         },
         score: {
             marginTop: "-25px",
             marginLeft: "auto",
             marginRight: "auto",
-            width: "100px",
-            height: "100px",
+            width: "70px",
+            height: "70px",
             boxShadow: `1px 1px 5px ${
                 color ? color.split(" ")[1] : shadowColor
             }`,
@@ -41,8 +42,8 @@ const QuestionHeader = ({
             marginLeft: "auto",
             marginRight: "auto",
             padding: "5px",
-            width: "90%",
-            height: "200px",
+            width: "88%",
+            height: "135px",
             borderRadius: "25px",
             background: "white",
             alignContent: "center",
@@ -67,7 +68,7 @@ const QuestionHeader = ({
                     <h4
                         style={{
                             ...styles.text,
-                            fontSize: "2rem",
+                            fontSize: "1.4rem",
                         }}
                     >
                         {score}
@@ -78,6 +79,7 @@ const QuestionHeader = ({
                         style={{
                             ...styles.text,
                             color: "black",
+                            fontSize: "1.2rem",
                         }}
                     >
                         {message}

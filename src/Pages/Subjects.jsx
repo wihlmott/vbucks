@@ -36,7 +36,7 @@ const Subjects = () => {
                         color: subjects[`${subject.title}`].color,
                     }}
                     title={subject.title}
-                    height="76px"
+                    height="70px"
                     backgroundColor={subjects[`${subject.title}`].color}
                     icon={subjects[`${subject.title}`].icon}
                 />

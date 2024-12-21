@@ -5,6 +5,7 @@ import { UserContext } from "../context/context";
 import GlossyButton from "./GlossyButton";
 import { getFormattedDate } from "../utils/helperFunctions";
 import UsedIndication from "./UsedIndication";
+import CloseButton from "./CloseButton";
 
 const themeColor = {
     gradient: colors.gradients[0],
@@ -51,6 +52,11 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         }
     };
 
+    const closeCard = () => {
+        setScale(false);
+        setError("");
+    };
+
     const styles = {
         overlay: {
             position: "fixed",
@@ -65,7 +71,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
             display: "flex",
             justifyContent: "center",
             position: "absolute",
-            bottom: "0",
+            bottom: "86px",
         },
         dot: {
             background: "rgba(255,255,255,0.5)",
@@ -100,9 +106,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
 
         card: {
             position: "absolute",
+            top: "10px",
             margin: "auto",
-            height: scale ? "260px" : "240px",
-            width: "200px",
+            height: scale ? "200px" : "190px",
+            width: "160px",
             display: "inline",
             borderRadius: "20px",
             boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
@@ -117,11 +124,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
             top: "0",
             bottom: "0",
             margin: "auto",
-            width: "125px",
+            width: "100px",
             marginLeft: "30px",
             filter: `drop-shadow(0 30px 20px rgba(255,255,255,0.45))`,
         },
-
         cardBig: {
             position: "absolute",
             width: "100%",
@@ -129,12 +135,12 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
             textAlign: "center",
             bottom: "0",
         },
-
         cardTitle: {
-            textAlign: "center",
             position: "absolute",
             margin: "0",
-            bottom: "340px",
+            bottom: "280px",
+            display: "inline",
+            textAlign: "center",
             textShadow: "1px 1px 4px rgba(0,0,0,.3)",
         },
         errorMessage: {
@@ -147,22 +153,14 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
 
     return (
         <>
-            {scale && (
-                <div
-                    style={styles.overlay}
-                    onClick={() => {
-                        setScale(false);
-                        setError("");
-                    }}
-                />
-            )}
+            {scale && <div style={styles.overlay} onClick={closeCard} />}
             {rewards.map((reward, i) => {
                 let styleObj = {};
                 if (i == currentIndex)
                     styleObj = {
                         ...styles.card,
                         ...styles.focusedCard,
-                        scale: scale ? "1.75" : "1",
+                        scale: scale ? "1.65" : "1",
                         transform: `translateY(${scale ? "30%" : "0"})`,
                         background:
                             points >= 100
@@ -183,16 +181,25 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                         ...styles.leftCard,
                         ...styles.notFocusedCard,
                     };
+                if (Math.abs(i - currentIndex) > 1)
+                    styleObj = { display: "none" };
 
                 return (
                     <div
                         key={i}
                         style={styleObj}
-                        onClick={() => {
+                        onClick={(e) => {
                             if (i == currentIndex) setScale(true);
                             setCurrentIndex(i);
                         }}
                     >
+                        <CloseButton
+                            submitHandler={(e) => {
+                                e.stopPropagation();
+                                closeCard();
+                            }}
+                            display={scale}
+                        />
                         {
                             <img
                                 style={styles.cardImg}
@@ -221,11 +228,9 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                     </h2>
                                     <GlossyButton
                                         text="use"
-                                        width="60%"
-                                        fontSize="1.3rem"
+                                        width="58%"
+                                        fontSize="1.2rem"
                                         borderRadius="12px"
-                                        bottom="0"
-                                        margin="0"
                                         submitHandler={() => {
                                             if (pointsState < 100)
                                                 setError(

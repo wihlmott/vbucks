@@ -1,4 +1,4 @@
-import { themeColor, colors, rewards, subjects } from "../config";
+import { themeColor, colors, rewards } from "../config";
 import RewardsCardsSideshow from "../Components/RewardsCardsSlideshow.jsx";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/context.jsx";
@@ -49,7 +49,7 @@ const ProfilePage = () => {
 
     return (
         <div style={styles.outterDiv}>
-            <h2 style={styles.headerText}>{name}</h2>
+            <h3 style={styles.headerText}>{name}</h3>
             <div style={{ ...styles.container, ...styles.topContainer }}>
                 <RewardsCardsSideshow
                     rewards={rewards}
@@ -68,7 +68,7 @@ const ProfilePage = () => {
                 <h4 style={styles.title}>class:</h4>
                 <h3 style={styles.text}>{regClass}</h3>
                 <h4 style={styles.title}>Subjects:</h4>
-                <div>
+                <div style={styles.subjects}>
                     {subjectArray?.map((el) => {
                         return (
                             <h3
@@ -110,7 +110,7 @@ const styles = {
         position: "absolute",
         width: "90vw",
         height: "40vh",
-        padding: "5px",
+        padding: "8px",
     },
     topContainer: {
         display: "flex",
@@ -123,9 +123,10 @@ const styles = {
         boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
         borderRadius: "20px 20px 0px 0px",
         background: "rgba(255,255,255,0.1)",
-        overflowY: "scroll",
+        overflow: "hidden",
     },
     title: {
+        fontSize: ".8rem",
         color: "rgba(255,255,255,0.9)",
         textShadow: colors.textShadowHeading,
         textTransform: "capitalize",
@@ -133,19 +134,29 @@ const styles = {
     },
     text: {
         margin: "5px 0px",
+        fontSize: "1.1rem",
         textShadow: colors.textShadowHeading,
         borderBottom: `1px solid ${themeColor.color}`,
         textTransform: "capitalize",
     },
+    subjects: {
+        height: "165px",
+        overflowY: "scroll",
+        boxShadow: "1px 1px 16px rgba(0,0,0,.35) inset",
+        padding: "0 5px",
+        borderRadius: "20px 20px 0px 0px",
+        marginTop: "6px",
+    },
     selectedSubject: {
         textShadow: "4px 4px 9px rgba(255,180,0,0.9)",
-        fontSize: "1.5rem",
+        fontSize: "1.1rem",
         textTransform: "capitalize",
         borderBottom: `1px solid ${themeColor.color}`,
         transitionProperty: "font-size",
         transitionDuration: "0.2s",
     },
     unselectedSubject: {
+        fontSize: "1rem",
         textShadow: colors.textShadowHeading,
         borderBottom: `1px solid ${themeColor.color}`,
         textTransform: "capitalize",

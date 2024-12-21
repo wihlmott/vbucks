@@ -17,6 +17,8 @@ const Options = ({ array, answer }) => {
                         {!clicked.locked.status ? (
                             <RadioCard
                                 message={option}
+                                height={"50px"}
+                                width={"80%"}
                                 square
                                 centerText
                                 onClick={(e) =>
@@ -36,6 +38,8 @@ const Options = ({ array, answer }) => {
                             option == clicked.clicked && (
                                 <RadioCard
                                     message={option}
+                                    height={"50px"}
+                                    width={"80%"}
                                     square
                                     centerText
                                     clicked={option == clicked.clicked}

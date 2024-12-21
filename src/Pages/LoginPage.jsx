@@ -86,6 +86,7 @@ const LoginPage = () => {
     };
     const styles = {
         form: {
+            scale: ".95",
             boxSizing: "border-box",
             textAlign: "center",
             width: "300px",

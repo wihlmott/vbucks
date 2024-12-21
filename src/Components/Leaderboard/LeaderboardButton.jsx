@@ -17,9 +17,9 @@ const styles = {
         position: "absolute",
         right: "0",
         marginRight: "30px",
-        marginTop: "-90px",
-        width: "46px",
-        borderRadius: "8px",
+        marginTop: "-76px",
+        width: "44px",
+        borderRadius: "10px",
         filter: "drop-shadow(2px 2px 4px rgba(0,0,0,.7))",
     },
 };

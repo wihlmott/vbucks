@@ -1,16 +1,10 @@
-import { colors } from "../config";
-
 const GlossyButton = ({
     text = "text",
     submitHandler = () => {},
     width = false,
     fontSize = false,
     borderRadius = false,
-    margin = false,
-    bottom = false,
 }) => {
-    const color = colors.gradients[0].split(" ")[1];
-
     const sendHandler = (e) => submitHandler(e);
 
     return (
