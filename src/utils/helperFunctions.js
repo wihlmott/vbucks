@@ -70,3 +70,21 @@ export const removeDuplicates = (array) =>
             (obj1, i, arr) =>
                 arr.findIndex((obj2) => obj2.title === obj1.title) === i
         );
+
+export const renderFraction = (text) =>
+    `${text.substring(0, text.indexOf("/") - 1)} \\frac{${
+        text[text.indexOf("/") - 1]
+    }}{${text[text.indexOf("/") + 1]}} ${text.substring(
+        text.indexOf("/") + 2
+    )}`;
+
+export const addSpaceAround = (text, checkFor) =>
+    text.indexOf(checkFor) == "-1"
+        ? text
+        : `${text.substring(
+              0,
+              text.indexOf(checkFor) - 1
+          )} \\ \{${text.substring(
+              text.indexOf(checkFor),
+              text.indexOf(checkFor) + checkFor.length
+          )}} \\ ${text.substring(text.indexOf(checkFor) + checkFor.length)}`;

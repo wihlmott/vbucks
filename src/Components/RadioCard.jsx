@@ -39,7 +39,24 @@ const RadioCard = ({
                     marginTop: "-46px",
                 }}
             >
-                <input type="radio" checked={clicked} onChange={() => {}} />
+                {/* <input type="radio" checked={clicked} /> */}
+                <div
+                    style={{
+                        marginTop: "2px",
+                        border: "1px solid black",
+                        width: "16px",
+                        height: "16px",
+                        borderRadius: "50%",
+                        background: clicked ? "grey" : "",
+                    }}
+                    onClick={() =>
+                        onClick({
+                            title: title,
+                            value: value,
+                            message: message,
+                        })
+                    }
+                />
             </span>
         </>
     );

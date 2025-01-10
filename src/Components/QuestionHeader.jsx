@@ -1,3 +1,4 @@
+import { MathJax } from "better-react-mathjax";
 import { colors } from "../config";
 import Header from "./Header";
 
@@ -75,15 +76,17 @@ const QuestionHeader = ({
                     </h4>
                 </div>
                 <div style={styles.messageBox}>
-                    <h1
-                        style={{
-                            ...styles.text,
-                            color: "black",
-                            fontSize: "1.2rem",
-                        }}
-                    >
-                        {message}
-                    </h1>
+                    <MathJax>
+                        <h1
+                            style={{
+                                ...styles.text,
+                                color: "black",
+                                fontSize: "1.2rem",
+                            }}
+                        >
+                            {`$$ ${message} $$`}
+                        </h1>
+                    </MathJax>
                 </div>
             </Header>
         </>
