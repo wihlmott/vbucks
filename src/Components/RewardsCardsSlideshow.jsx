@@ -29,7 +29,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchEndX, setTouchEndX] = useState(0);
-    const [moving, setMoving] = useState({ state: false, direction: null });
+    const [move, setMove] = useState(0);
 
     const [error, setError] = useState();
     const [scale, setScale] = useState(false);
@@ -68,19 +68,17 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     };
     const onTouchMoveHandler = (e) => {
         setTouchEndX(e.targetTouches[0].clientX);
+        setMove(touchEndX - touchStartX);
     };
+
     const onTouchEndHandler = (e) => {
-        const translateDist = touchEndX - touchStartX;
-
-        if (translateDist > 80) {
-            setMoving({ state: false, direction: "right" });
-            setCurrentIndex((prev) => (prev == 0 ? prev : prev - 1));
-        }
-
-        if (translateDist < 80)
+        if (move > 80) setCurrentIndex((prev) => (prev == 0 ? prev : prev - 1));
+        if (move < -80)
             setCurrentIndex((prev) =>
                 prev == rewards.length - 1 ? prev : prev + 1
             );
+
+        setMove(0);
     };
 
     // const translatePartial = (toTranslate) => {};
@@ -218,7 +216,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                         style={styleObj}
                         onClick={(e) => {
                             if (i == currentIndex) setScale(true);
-                            setCurrentIndex(i);
+                            // setCurrentIndex(i);
                         }}
                         onTouchStart={(e) => onTouchStartHandler(e)}
                         onTouchMove={(e) => onTouchMoveHandler(e)}
