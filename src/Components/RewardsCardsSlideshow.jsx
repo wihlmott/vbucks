@@ -11,6 +11,7 @@ const themeColor = {
     gradient: colors.gradients[0],
     color: colors.gradients[0].split(" ")[1],
 };
+const cardWidth = "160px";
 
 const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     const [user, setUser] = useContext(UserContext);
@@ -26,6 +27,10 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     });
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
+    const [moving, setMoving] = useState({ state: false, direction: null });
+
     const [error, setError] = useState();
     const [scale, setScale] = useState(false);
 
@@ -56,6 +61,29 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         setScale(false);
         setError("");
     };
+
+    const onTouchStartHandler = (e) => {
+        setTouchStartX(e.targetTouches[0].clientX);
+        setTouchEndX(e.targetTouches[0].clientX);
+    };
+    const onTouchMoveHandler = (e) => {
+        setTouchEndX(e.targetTouches[0].clientX);
+    };
+    const onTouchEndHandler = (e) => {
+        const translateDist = touchEndX - touchStartX;
+
+        if (translateDist > 80) {
+            setMoving({ state: false, direction: "right" });
+            setCurrentIndex((prev) => (prev == 0 ? prev : prev - 1));
+        }
+
+        if (translateDist < 80)
+            setCurrentIndex((prev) =>
+                prev == rewards.length - 1 ? prev : prev + 1
+            );
+    };
+
+    // const translatePartial = (toTranslate) => {};
 
     const styles = {
         overlay: {
@@ -92,31 +120,28 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         },
         focusedCard: {
             scale: "1",
-            transform: "translateX(0)",
+            // transform: `translateX(${translateDist})`,
             background: `rgba(255,255,255,1)`,
             zIndex: "2",
         },
 
         leftCard: {
-            transform: "translateX(-73%)",
+            marginLeft: "-160px",
         },
         rightCard: {
-            transform: "translateX(73%)",
+            marginLeft: "160px",
         },
 
         card: {
             position: "absolute",
             top: "10px",
-            margin: "auto",
             height: scale ? "200px" : "190px",
-            width: "160px",
+            width: cardWidth,
             display: "inline",
             borderRadius: "20px",
             boxShadow: `0 -5px 20px 2px ${themeColor.color}`,
             background: `rgba(255,255,255,${true ? "0.3" : "1"})`,
             cursor: "pointer",
-            transitionProperty: "transform, scale, background",
-            transitionDuration: "0.3s",
         },
 
         cardImg: {
@@ -160,13 +185,15 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                     styleObj = {
                         ...styles.card,
                         ...styles.focusedCard,
-                        scale: scale ? "1.65" : "1",
-                        transform: `translateY(${scale ? "30%" : "0"})`,
+                        scale: scale ? "1.55" : "1",
+                        marginLeft: "0",
+                        marginTop: scale ? "80px" : "0",
                         background:
                             points >= 100
                                 ? "orange"
                                 : `linear-gradient(0deg, orange 0%, white ${points}%)`,
-                        transitionProperty: "background, scale, transform",
+                        transitionProperty:
+                            "background, scale, transform, margin-left, margin-top",
                         transitionDuration: ".5s",
                     };
                 if (i == currentIndex + 1)
@@ -187,11 +214,15 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                 return (
                     <div
                         key={i}
+                        id={i}
                         style={styleObj}
                         onClick={(e) => {
                             if (i == currentIndex) setScale(true);
                             setCurrentIndex(i);
                         }}
+                        onTouchStart={(e) => onTouchStartHandler(e)}
+                        onTouchMove={(e) => onTouchMoveHandler(e)}
+                        onTouchEnd={(e) => onTouchEndHandler(e)}
                     >
                         <CloseButton
                             submitHandler={(e) => {
