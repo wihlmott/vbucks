@@ -217,7 +217,7 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                         style={styleObj}
                         onClick={(e) => {
                             if (i == currentIndex) setScale(true);
-                            // setCurrentIndex(i);
+                            setCurrentIndex(i);
                         }}
                         onTouchStart={(e) => onTouchStartHandler(e)}
                         onTouchMove={(e) => onTouchMoveHandler(e)}
