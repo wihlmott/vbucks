@@ -55,10 +55,10 @@ export const teacherNavBarIcons = [
 ];
 
 export const rewards = [
-    { value: "reward1", img: homeworkIMG, id: "homework" },
-    { value: "reward2", img: musicIMG, id: "music" },
-    { value: "reward3", img: freetimeIMG, id: "freetime" },
-    { value: "reward4", img: teamworkIMG, id: "teamwork" },
+    { value: 100, img: homeworkIMG, id: "homework" },
+    { value: 200, img: musicIMG, id: "music" },
+    { value: 300, img: freetimeIMG, id: "freetime" },
+    { value: 100, img: teamworkIMG, id: "teamwork" },
 ];
 
 export const newLearnerQuestions = [

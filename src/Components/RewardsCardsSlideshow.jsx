@@ -22,7 +22,8 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
         return {
             subject: reward.split("-")[0],
             reward: reward.split("-")[1],
-            date: reward.split("-")[2],
+            value: reward.split("-")[2],
+            date: reward.split("-")[3],
         };
     });
 
@@ -72,8 +73,8 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
     };
 
     const onTouchEndHandler = (e) => {
-        if (move > 80) setCurrentIndex((prev) => (prev == 0 ? prev : prev - 1));
-        if (move < -80)
+        if (move > 60) setCurrentIndex((prev) => (prev == 0 ? prev : prev - 1));
+        if (move < -60)
             setCurrentIndex((prev) =>
                 prev == rewards.length - 1 ? prev : prev + 1
             );
@@ -261,11 +262,11 @@ const RewardsCardsSideshow = ({ rewards, points, subject }) => {
                                         fontSize="1.2rem"
                                         borderRadius="12px"
                                         submitHandler={() => {
-                                            if (pointsState < 100)
+                                            if (pointsState < reward.value)
                                                 setError(
-                                                    `need 100 points to use`
+                                                    `need ${reward.value} points to use`
                                                 );
-                                            if (pointsState >= 100)
+                                            if (pointsState >= reward.value)
                                                 updateUsedCards(reward);
                                         }}
                                     />

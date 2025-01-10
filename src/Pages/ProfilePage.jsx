@@ -29,13 +29,17 @@ const ProfilePage = () => {
                 0
             );
 
-        const amountOfRewardsCompleted = rewards_used.filter(
-            (el) => el.split("-")[el.split("-").length - 2] == subject
-        ).length;
+        const scoreUsed = rewards_used
+            .filter((el) => el.split("-")[0] == subject)
+            .reduce(
+                (acc, curr) =>
+                    acc + parseInt(curr.split("-")[curr.split("-").length - 2]),
+                0
+            );
 
         return {
             subject: subject,
-            score: totalScore - amountOfRewardsCompleted * 100,
+            score: totalScore - scoreUsed,
         };
     });
 
