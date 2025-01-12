@@ -106,7 +106,11 @@ export const newQuizQuestions = [
             { text: "word or phrase", element: "input_string" },
         ],
     },
-    { value: "question", type: "input" },
+    {
+        value: "question",
+        type: "input",
+        message: "start and end math statements with tilde(~)",
+    },
     {
         value: "answer",
         type: "input",

@@ -88,3 +88,6 @@ export const addSpaceAround = (text, checkFor) =>
               text.indexOf(checkFor),
               text.indexOf(checkFor) + checkFor.length
           )}} \\ ${text.substring(text.indexOf(checkFor) + checkFor.length)}`;
+
+export const formatMessage = (text, checkFor) =>
+    text.indexOf(checkFor) == "-1" ? text : text.replace(/~/g, `$$$`);

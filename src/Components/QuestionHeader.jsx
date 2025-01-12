@@ -1,6 +1,7 @@
 import { MathJax } from "better-react-mathjax";
 import { colors } from "../config";
 import Header from "./Header";
+import { formatMessage } from "../utils/helperFunctions";
 
 const QuestionHeader = ({
     title = false,
@@ -53,6 +54,8 @@ const QuestionHeader = ({
         },
     };
 
+    const messageToRender = formatMessage(message, "~");
+
     return (
         <>
             <Header
@@ -84,7 +87,7 @@ const QuestionHeader = ({
                                 fontSize: "1.2rem",
                             }}
                         >
-                            {`$$ ${message} $$`}
+                            {messageToRender}
                         </h1>
                     </MathJax>
                 </div>
