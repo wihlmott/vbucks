@@ -114,12 +114,14 @@ export const newQuizQuestions = [
     {
         value: "answer",
         type: "input",
-        message: "seperate multiple answers with a comma(,)",
+        message:
+            "seperate multiple answers with a comma(,). start and end math statements with tilde(~)",
     },
     {
         value: "options",
         type: "input",
-        message: "seperate multiple options with a comma(,)",
+        message:
+            "seperate multiple answers with a comma(,). start and end math statements with tilde(~)",
     },
     {
         value: "description",

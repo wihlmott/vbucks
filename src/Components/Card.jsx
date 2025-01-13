@@ -1,7 +1,11 @@
 import { MathJax } from "better-react-mathjax";
 import { colors } from "../config";
 import ProgressBar from "./ProgressBar.jsx";
-import { addSpaceAround, renderFraction } from "../utils/helperFunctions.js";
+import {
+    addSpaceAround,
+    formatMessage,
+    renderFraction,
+} from "../utils/helperFunctions.js";
 
 const Card = ({
     height = "auto",
@@ -21,10 +25,14 @@ const Card = ({
 }) => {
     const fraction = message ? !(message.indexOf("/") == "-1") : false;
     const andSpace = message ? !(message.indexOf("and") == "-1") : false;
+    const orSpace = message ? !(message.indexOf("or") == "-1") : false;
     let renderMessage = message;
 
     if (fraction) renderMessage = renderFraction(message);
     if (andSpace) renderMessage = addSpaceAround(message, "and");
+    if (orSpace) renderMessage = addSpaceAround(message, "or");
+
+    renderMessage = formatMessage(renderMessage, "~");
 
     const styles = {
         card: {
@@ -103,7 +111,9 @@ const Card = ({
                 </div>
                 {message && (
                     <p style={styles.message}>
-                        <MathJax>{`$$ ${renderMessage} $$`}</MathJax>
+                        <MathJax inline dynamic>
+                            {renderMessage}
+                        </MathJax>
                     </p>
                 )}
             </>

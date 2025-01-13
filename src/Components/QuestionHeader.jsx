@@ -79,7 +79,7 @@ const QuestionHeader = ({
                     </h4>
                 </div>
                 <div style={styles.messageBox}>
-                    <MathJax>
+                    <MathJax inline dynamic>
                         <h1
                             style={{
                                 ...styles.text,
