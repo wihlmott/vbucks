@@ -26,13 +26,13 @@ const Card = ({
     const fraction = message ? !(message.indexOf("/") == "-1") : false;
     const andSpace = message ? !(message.indexOf("and") == "-1") : false;
     const orSpace = message ? !(message.indexOf("or") == "-1") : false;
+    const tilde = message ? !(message.indexOf("~") == "-1") : false;
     let renderMessage = message;
 
     if (fraction) renderMessage = renderFraction(message);
     if (andSpace) renderMessage = addSpaceAround(message, "and");
     if (orSpace) renderMessage = addSpaceAround(message, "or");
-
-    renderMessage = formatMessage(renderMessage, "~");
+    if (tilde) renderMessage = formatMessage(renderMessage, "~");
 
     const styles = {
         card: {
